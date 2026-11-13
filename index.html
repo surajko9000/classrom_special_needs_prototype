@@ -118,6 +118,42 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 .legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted);margin-top:8px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
 @media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.g-main,.g-3,.g-2{grid-template-columns:1fr}}
+.lbl{display:block;font-size:12px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.seg{display:inline-flex;background:var(--warm);border-radius:10px;padding:3px}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;border-radius:8px;font-size:14px;font-weight:550;color:#40505f}
+.seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pick{cursor:pointer;background:var(--warm);padding:8px 14px}.pick.on{background:var(--blue);color:#fff}
+.qchip{all:unset;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;color:var(--blue);font-weight:550}
+.qchip:hover{border-color:var(--teal);background:var(--teal-soft)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{all:unset;cursor:pointer;box-sizing:border-box;border:2px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:130px;background:#fff;transition:.15s}
+.tile:hover{box-shadow:0 4px 14px rgba(30,74,110,.12)}
+.tile:focus-visible{outline:3px solid var(--teal)}
+.tile .th{display:flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.04em}
+.tile .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px}
+.tile .chev{margin-left:auto;font-size:22px;color:var(--muted)}
+.tile .tv{font-size:18px;font-weight:650;color:var(--muted)}
+.tile .hint{font-size:12.5px;color:var(--muted);margin-top:auto}
+.tile.set .tv{color:var(--ink)}
+.tA{border-color:#e6c27a}.tA .num{background:#c08a3e}.tA .th b{color:#a06d20}
+.tB{border-color:#9fb8d1}.tB .num{background:var(--blue)}.tB .th b{color:var(--blue)}
+.tC{border-color:#8fcac6}.tC .num{background:var(--teal)}.tC .th b{color:var(--teal)}
+.tP{border-color:#a5d0b6}.tP .num{background:var(--green)}.tP .th b{color:var(--green)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(31,42,55,.45);z-index:20;justify-content:flex-end}
+.overlay.open{display:flex}
+.sheet{background:var(--card);width:min(440px,100%);height:100%;padding:18px 20px;display:flex;flex-direction:column;overflow:hidden}
+.sh-head{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;text-align:center;font-size:18px}
+.back{all:unset;cursor:pointer;font-size:22px;padding:4px 8px}
+.input input{all:unset;width:100%}
+.plist{flex:1;overflow:auto}
+.opt{display:flex;justify-content:space-between;align-items:center;padding:13px 6px;border-bottom:1px solid var(--line);cursor:pointer;font-size:16px}
+.opt:hover{background:var(--warm)}
+.opt .circ{width:22px;height:22px;border-radius:50%;border:2px solid #aab4be;display:grid;place-items:center;font-size:13px;color:#fff}
+.opt.sel{background:var(--teal-soft);font-weight:650;color:#15686a}
+.opt.sel .circ{background:var(--teal);border-color:var(--teal)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;transition:.3s;z-index:30;opacity:0}
+.toast.show{transform:translateX(-50%);opacity:1}
+@media(max-width:700px){.tiles{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -204,37 +240,53 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 
 <!-- ================= LOG ================= -->
 <section class="page" id="log">
-  <div class="title"><div><h1>Log an observation</h1><p>Write it the way you'd say it. Review the structure before saving.</p></div></div>
-  <div class="grid g-2" style="grid-template-columns:1fr 1.1fr">
-    <div class="card">
-      <div class="row field">
-        <div style="flex:1"><label>Class (auto)</label><div class="input">Science · Period 2</div></div>
-        <div style="flex:1"><label>Time</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
-      </div>
-      <div class="field"><label>Student</label>
-        <div class="row"><span class="pill blue" style="padding:8px 14px">John D.</span><span class="pill" style="background:var(--warm);padding:8px 14px">Alex M.</span><span class="pill" style="background:var(--warm);padding:8px 14px">Maya R.</span></div></div>
-      <div class="field"><label>What happened?</label>
-        <textarea>During independent science reading around 9:15, John tossed his workbook after the instructions seemed confusing. I offered a break and then split the reading into smaller chunks. He returned to the activity.</textarea></div>
-      <div class="row"><button class="btn primary">✦ Structure note</button><div class="mic" title="Visual only">🎙</div><span class="muted small">Voice input is a placeholder in this demo.</span></div>
-      <div class="disclaimer">Structuring is simulated for this prototype. You review and correct everything before it is saved.</div>
-    </div>
+  <div class="title"><div><h1>Log an observation</h1><p>Tap to choose. No typing needed unless you want to add detail.</p></div>
+    <div class="seg" id="typeSeg"><button class="on" data-t="challenge">Incident</button><button data-t="positive">Positive progress</button></div></div>
 
-    <div class="card draft">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>Draft — review required</h3><span class="pill amber">Not saved yet</span></div>
-      <div class="abc field"><div class="letter">A</div><div style="flex:1"><label>Antecedent — what happened before</label><div class="input">Independent science reading; student indicated the instructions seemed confusing.</div></div></div>
-      <div class="abc field"><div class="letter">B</div><div style="flex:1"><label>Behavior — what was observed</label><div class="input">Tossed workbook.</div></div></div>
-      <div class="abc field"><div class="letter">C</div><div style="flex:1"><label>Response — what happened after</label><div class="input">Teacher offered a break, then divided the reading into smaller chunks. Student returned to the activity.</div></div></div>
-      <div class="row field">
-        <div style="flex:1"><label>Support used</label><div class="input">Break offered · chunked reading</div></div>
-        <div style="flex:1"><label>Outcome</label><div class="input">Re-engaged with task</div></div>
-      </div>
-      <div class="row field">
-        <div style="flex:1"><label>Duration</label><div class="input flag">Not documented — add if known</div></div>
-        <div style="flex:1"><label>Location</label><div class="input flag">Not documented — add if known</div></div>
-      </div>
-      <div class="row"><button class="btn primary">Save observation</button><button class="btn ghost">Discard</button><span class="muted small">Type: Incident + support used</span></div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="row">
+      <div style="flex:1;min-width:160px"><label class="lbl">Class (auto)</label><div class="input">Science · Period 2</div></div>
+      <div style="flex:1;min-width:160px"><label class="lbl">Time (editable)</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
+      <div style="flex:2;min-width:260px"><label class="lbl">Student</label>
+        <div class="row" id="stuRow"><span class="pill blue pick on">John D.</span><span class="pill pick">Alex M.</span><span class="pill pick">Maya R.</span></div></div>
     </div>
   </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+      <h3>What happened</h3><span class="small muted" id="progress">0 of 4 added</span>
+    </div>
+    <div class="row" style="margin:12px 0 16px" id="quick"><span class="small muted">Quick fill · common for John D.:</span></div>
+
+    <div class="tiles">
+      <button class="tile tA" data-k="A"><div class="th"><span class="num">1</span><b>ANTECEDENT</b><span class="chev">›</span></div><div class="tv" id="vA">Tap to choose</div><div class="hint">What happened right before</div></button>
+      <button class="tile tB" data-k="B"><div class="th"><span class="num">2</span><b>BEHAVIOR</b><span class="chev">›</span></div><div class="tv" id="vB">Tap to choose</div><div class="hint">What you observed</div></button>
+      <button class="tile tC" data-k="C"><div class="th"><span class="num">3</span><b>CONSEQUENCE / RESPONSE</b><span class="chev">›</span></div><div class="tv" id="vC">Tap to choose</div><div class="hint">What happened after, incl. staff actions</div></button>
+      <button class="tile tP" data-k="P"><div class="th"><span class="num">4</span><b>SUPPORT USED</b><span class="chev">›</span></div><div class="tv" id="vP">Tap to choose</div><div class="hint">Proactive strategy in place or used</div></button>
+    </div>
+
+    <div class="row" style="margin-top:18px;gap:24px;align-items:flex-start">
+      <div><label class="lbl">Intensity (optional)</label><div class="seg" id="intSeg"><button>Low</button><button>Medium</button><button>High</button></div></div>
+      <div><label class="lbl">Outcome</label><div class="seg" id="outSeg"><button>Re-engaged</button><button>Partly</button><button>Ended activity</button></div></div>
+      <div style="flex:1;min-width:240px"><label class="lbl">Add a note (optional)</label><div class="input" style="color:var(--muted)">Anything else worth remembering… 🎙 <span class="small">(voice is a placeholder)</span></div></div>
+    </div>
+  </div>
+
+  <div class="card draft" style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+    <div style="flex:1;min-width:260px"><span class="pill amber">Draft — review required</span>
+      <div id="summary" style="margin-top:8px" class="muted">Choose at least a behavior to review your entry.</div></div>
+    <div class="row"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn primary" id="saveBtn" disabled style="opacity:.5">Save observation</button></div>
+  </div>
+  <div class="disclaimer">You verify every field before saving. Nothing is filled in on its own — quick fills are shortcuts you can edit.</div>
+
+  <div class="overlay" id="overlay"><div class="sheet">
+    <div class="sh-head"><button class="back" id="pBack">←</button><b id="pTitle">Antecedent</b><span></span></div>
+    <div class="input" style="margin:12px 0"><input id="pSearch" placeholder="🔍 Search…"></div>
+    <div id="pList" class="plist"></div>
+    <div class="input" style="margin-top:12px"><input id="pDesc" placeholder="Description (optional)"></div>
+    <button class="btn primary" id="pDone" style="width:100%;margin-top:12px;padding:13px;border-radius:999px">Done</button>
+  </div></div>
+  <div class="toast" id="toast">Saved — added to John D.'s timeline (preview only)</div>
 </section>
 
 <!-- ================= PREP ================= -->
@@ -364,6 +416,48 @@ btns.forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('nav button').forEach(n=>n.classList.toggle('active',n.dataset.p===id));
   window.scrollTo(0,0);
 }));
+
+const OPT={
+ A:["Activity interrupted","Activity denied","Activity transition","Divided attention","Given corrective feedback","Given demand / task","Long independent task","Unclear directions","Left alone","Presence of a specific person","Redirection","Told to wait","Unexpected change"],
+ Bc:["Left designated area","Property misuse","Property destruction","Verbal outburst","Work refusal","Disengaged / sleeping","Threat","Physical contact with others"],
+ Bp:["Used a break card","Asked for help","Returned to task","Transitioned smoothly","Completed task","Joined group calmly"],
+ C:["Behavior ignored","Blocked","Given another activity","Given preferred item","Left alone","Offered a break","Peer remarks","Removed from activity","Reprimand","Task shortened / chunked","Verbal redirection"],
+ P:["Countdown before transitions","Offer choices","Positive interaction","Proactive brief break","Reduce unstructured time","Self-monitoring check-in","Teach expected behavior","Timed work intervals","Transition support","Use of clear expectations","Visual schedule","Chunked directions","None","Other"]};
+const TITLE={A:"Antecedent",B:"Behavior",C:"Consequence / Response",P:"Support used"};
+const QUICK={challenge:[
+ ["Long task → Work refusal → Break offered",{A:["Long independent task"],B:["Work refusal"],C:["Offered a break"],P:["Chunked directions"]}],
+ ["Transition → Left area → Redirection",{A:["Activity transition"],B:["Left designated area"],C:["Verbal redirection"],P:["Countdown before transitions"]}],
+ ["Unclear directions → Property misuse",{A:["Unclear directions"],B:["Property misuse"],C:["Task shortened / chunked"],P:["Use of clear expectations"]}]],
+ positive:[
+ ["Break card → Returned to task",{A:["Long independent task"],B:["Used a break card","Returned to task"],C:["Offered a break"],P:["Proactive brief break"]}],
+ ["Transition went smoothly",{A:["Activity transition"],B:["Transitioned smoothly"],C:["Positive interaction"],P:["Countdown before transitions"]}]]};
+let S={A:[],B:[],C:[],P:[]},type="challenge",cur=null,tmp=[];
+const $=id=>document.getElementById(id);
+function bList(){return type==="challenge"?OPT.Bc:OPT.Bp}
+function render(){
+ ["A","B","C","P"].forEach(k=>{const t=document.querySelector(`.tile[data-k=${k}]`);const v=S[k];
+  $("v"+k).textContent=v.length?v.join(" · "):"Tap to choose";t.classList.toggle("set",v.length>0)});
+ $("progress").textContent=["A","B","C","P"].filter(k=>S[k].length).length+" of 4 added";
+ const ok=S.B.length>0;const sb=$("saveBtn");sb.disabled=!ok;sb.style.opacity=ok?1:.5;
+ $("summary").innerHTML=ok?`<b>John D.</b> · Science · 9:15 AM<br>Before: ${S.A.join(", ")||"<i>Not documented</i>"}<br>Observed: ${S.B.join(", ")}<br>Response: ${S.C.join(", ")||"<i>Not documented</i>"}<br>Support: ${S.P.join(", ")||"<i>Not documented</i>"}`:"Choose at least a behavior to review your entry.";
+ const q=$("quick");q.querySelectorAll(".qchip").forEach(e=>e.remove());
+ QUICK[type].forEach(([l,v])=>{const b=document.createElement("button");b.className="qchip";b.textContent="⚡ "+l;b.onclick=()=>{S=JSON.parse(JSON.stringify(v));render()};q.appendChild(b)});
+}
+function openP(k){cur=k;tmp=[...S[k]];$("pTitle").textContent=TITLE[k];$("pSearch").value="";$("pDesc").value="";drawList();$("overlay").classList.add("open")}
+function drawList(){const f=$("pSearch").value.toLowerCase();const src=cur==="B"?bList():OPT[cur];
+ $("pList").innerHTML="";src.filter(o=>o.toLowerCase().includes(f)).forEach(o=>{const d=document.createElement("div");
+  d.className="opt"+(tmp.includes(o)?" sel":"");d.innerHTML=`<span>${o}</span><span class="circ">${tmp.includes(o)?"✓":""}</span>`;
+  d.onclick=()=>{tmp=tmp.includes(o)?tmp.filter(x=>x!==o):[...tmp,o];drawList()};$("pList").appendChild(d)})}
+document.querySelectorAll(".tile").forEach(t=>t.onclick=()=>openP(t.dataset.k));
+$("pSearch").oninput=drawList;
+$("pDone").onclick=()=>{const d=$("pDesc").value.trim();S[cur]=d?[...tmp,"“"+d+"”"]:tmp;$("overlay").classList.remove("open");render()};
+$("pBack").onclick=()=>$("overlay").classList.remove("open");
+document.querySelectorAll("#typeSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x===b));type=b.dataset.t;S={A:[],B:[],C:[],P:[]};render()});
+["intSeg","outSeg"].forEach(id=>document.querySelectorAll("#"+id+" button").forEach(b=>b.onclick=()=>document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b&&!x.classList.contains("on")))));
+document.querySelectorAll("#stuRow .pick").forEach(p=>p.onclick=()=>document.querySelectorAll("#stuRow .pick").forEach(x=>x.classList.toggle("on",x===p)));
+$("clearBtn").onclick=()=>{S={A:[],B:[],C:[],P:[]};render()};
+$("saveBtn").onclick=()=>{const t=$("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);S={A:[],B:[],C:[],P:[]};render()};
+render();
 </script>
 </body>
 </html>
