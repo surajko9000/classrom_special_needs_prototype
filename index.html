@@ -154,6 +154,35 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;transition:.3s;z-index:30;opacity:0}
 .toast.show{transform:translateX(-50%);opacity:1}
 @media(max-width:700px){.tiles{grid-template-columns:1fr}}
+.frows{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}
+.frow{display:grid;grid-template-columns:150px 1fr auto;gap:12px;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);border-left:4px solid var(--c,var(--line))}
+.frow:last-child{border-bottom:0}
+.cA{--c:#c08a3e}.cB{--c:var(--blue)}.cC{--c:var(--teal)}.cP{--c:var(--green)}
+.frow .fl{display:flex;gap:10px;align-items:center}
+.frow .num{width:26px;height:26px;border-radius:8px;background:var(--c);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.frow .hint{font-size:12px;color:var(--muted)}
+.fv{display:flex;gap:6px;flex-wrap:wrap;min-height:28px;align-items:center}
+.fv .tag{background:var(--warm);border-radius:8px;padding:4px 10px;font-size:13.5px;font-weight:550}
+.fv .none{color:#a3acb5;font-size:13.5px}
+.choose{all:unset;cursor:pointer;color:var(--blue);font-weight:600;font-size:13.5px;padding:7px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;white-space:nowrap}
+.choose:hover{border-color:var(--blue);background:var(--blue-soft)}
+.choose:focus-visible{outline:3px solid var(--teal)}
+.micbtn{position:absolute;right:10px;bottom:10px;opacity:.5}
+.savebar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;padding:14px;border:2px dashed var(--amber);border-radius:14px;background:#fffdf5}
+.fchip{cursor:pointer;padding:5px 11px;border-radius:999px;background:var(--warm);font-size:13px;font-weight:550;color:#40505f}
+.fchip.on{background:var(--blue);color:#fff}
+.fsep{width:1px;height:20px;background:var(--line);margin:0 4px}
+.loglist{max-height:640px;overflow:auto}
+.le{display:flex;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.le:last-child{border:0}
+.le.hide{display:none}
+.le.new{background:var(--teal-soft);border-radius:10px;padding:12px 8px}
+.ld{width:10px;height:10px;border-radius:50%;background:var(--blue);margin-top:6px;flex:none}.ld.pos{background:var(--green)}
+.lh{font-size:14.5px}.lh .muted{margin-left:6px}
+.lc{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;color:var(--muted);font-size:13px}
+.lc span{background:var(--warm);color:var(--ink);border-radius:6px;padding:2px 8px}
+.ln{font-size:13.5px;color:#41505e;margin-top:5px;font-style:italic}
+@media(max-width:700px){.frow{grid-template-columns:1fr auto}.frow .fv{grid-column:1/3;order:3}}
 </style>
 </head>
 <body>
@@ -234,44 +263,60 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 
 <!-- ================= LOG ================= -->
 <section class="page" id="log">
-  <div class="title"><div><h1>Log an observation</h1><p>Tap to choose. No typing needed unless you want to add detail.</p></div>
+  <div class="title"><div><h1>Log an observation</h1><p>Tap to choose, add a note in your own words, or both.</p></div>
     <div class="seg" id="typeSeg"><button class="on" data-t="challenge">Incident</button><button data-t="positive">Positive progress</button></div></div>
 
-  <div class="card" style="margin-bottom:18px">
-    <div class="row">
-      <div style="flex:1;min-width:160px"><label class="lbl">Class (auto)</label><div class="input">Science · Period 2</div></div>
-      <div style="flex:1;min-width:160px"><label class="lbl">Time (editable)</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
-      <div style="flex:2;min-width:260px"><label class="lbl">Student</label>
-        <div class="row" id="stuRow"><span class="pill blue pick on">John D.</span><span class="pill pick">Alex M.</span><span class="pill pick">Maya R.</span></div></div>
+  <div class="grid" style="grid-template-columns:1.1fr 1fr;align-items:start">
+  <div class="card">
+    <div class="row" style="margin-bottom:14px">
+      <div style="flex:1;min-width:140px"><label class="lbl">Class (auto)</label><div class="input">Science · Period 2</div></div>
+      <div style="flex:1;min-width:140px"><label class="lbl">Time (editable)</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
     </div>
+    <label class="lbl">Student</label>
+    <div class="row" id="stuRow" style="margin-bottom:16px"><span class="pill pick on">John D.</span><span class="pill pick">Alex M.</span><span class="pill pick">Maya R.</span></div>
+
+    <div class="row" style="margin-bottom:14px" id="quick"><span class="small muted">⚡ Quick fill:</span></div>
+
+    <div class="frows">
+      <div class="frow cA"><div class="fl"><span class="num">A</span><div><b>Before</b><div class="hint">Antecedent</div></div></div><div class="fv" id="vA"></div><button class="choose" data-k="A">＋ Choose</button></div>
+      <div class="frow cB"><div class="fl"><span class="num">B</span><div><b>Observed</b><div class="hint">Behavior</div></div></div><div class="fv" id="vB"></div><button class="choose" data-k="B">＋ Choose</button></div>
+      <div class="frow cC"><div class="fl"><span class="num">C</span><div><b>After</b><div class="hint">Consequence / response</div></div></div><div class="fv" id="vC"></div><button class="choose" data-k="C">＋ Choose</button></div>
+      <div class="frow cP"><div class="fl"><span class="num">✦</span><div><b>Support</b><div class="hint">Proactive strategy</div></div></div><div class="fv" id="vP"></div><button class="choose" data-k="P">＋ Choose</button></div>
+    </div>
+
+    <label class="lbl" style="margin-top:16px">Quick note — in your own words (optional)</label>
+    <div style="position:relative"><textarea id="noteTxt" style="min-height:84px" placeholder="e.g. Tossed his workbook after the directions seemed confusing. Offered a break, then chunked the reading. He went back to it."></textarea><span class="micbtn" title="Placeholder — voice input is not active in this demo">🎙</span></div>
+
+    <div class="row" style="margin-top:14px;gap:24px;align-items:flex-start">
+      <div><label class="lbl">Intensity</label><div class="seg" id="intSeg"><button>Low</button><button>Medium</button><button>High</button></div></div>
+      <div><label class="lbl">Outcome</label><div class="seg" id="outSeg"><button>Re-engaged</button><button>Partly</button><button>Ended activity</button></div></div>
+    </div>
+
+    <div class="savebar">
+      <div><span class="pill amber">Draft — review required</span><div class="small muted" id="summary" style="margin-top:6px"></div></div>
+      <div class="row"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn primary" id="saveBtn" disabled style="opacity:.5">Save observation</button></div>
+    </div>
+    <div class="small muted" style="margin-top:10px">Quick fills are shortcuts, not facts. Anything you don't set is saved as “Not documented”.</div>
   </div>
 
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-      <h3>What happened</h3><span class="small muted" id="progress">0 of 4 added</span>
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><h3>Recent log</h3><span class="small muted" id="logCount"></span></div>
+    <div class="row" style="margin:10px 0" id="logFilters">
+      <span class="fchip on" data-f="all">All</span><span class="fchip" data-f="incident">Incidents</span><span class="fchip" data-f="positive">Positive</span>
+      <span class="fsep"></span>
+      <span class="fchip on" data-s="all">Everyone</span><span class="fchip" data-s="John D.">John</span><span class="fchip" data-s="Alex M.">Alex</span><span class="fchip" data-s="Maya R.">Maya</span>
     </div>
-    <div class="row" style="margin:12px 0 16px" id="quick"><span class="small muted">Quick fill · common for John D.:</span></div>
-
-    <div class="tiles">
-      <button class="tile tA" data-k="A"><div class="th"><span class="num">1</span><b>ANTECEDENT</b><span class="chev">›</span></div><div class="tv" id="vA">Tap to choose</div><div class="hint">What happened right before</div></button>
-      <button class="tile tB" data-k="B"><div class="th"><span class="num">2</span><b>BEHAVIOR</b><span class="chev">›</span></div><div class="tv" id="vB">Tap to choose</div><div class="hint">What you observed</div></button>
-      <button class="tile tC" data-k="C"><div class="th"><span class="num">3</span><b>CONSEQUENCE / RESPONSE</b><span class="chev">›</span></div><div class="tv" id="vC">Tap to choose</div><div class="hint">What happened after, incl. staff actions</div></button>
-      <button class="tile tP" data-k="P"><div class="th"><span class="num">4</span><b>SUPPORT USED</b><span class="chev">›</span></div><div class="tv" id="vP">Tap to choose</div><div class="hint">Proactive strategy in place or used</div></button>
+    <div id="logList" class="loglist">
+      <div class="le" data-t="positive" data-s="Maya R."><div class="ld pos"></div><div><div class="lh"><b>Maya R.</b> · Life Skills <span class="muted small">Wed Nov 11 · 1:20 PM</span></div><div class="lc"><span>Group work change</span>›<span>Joined group calmly</span>›<span>Positive interaction</span></div><div class="ln">“Had advance notice about the new groups, joined without prompting.”</div></div></div>
+      <div class="le" data-t="positive" data-s="John D."><div class="ld pos"></div><div><div class="lh"><b>John D.</b> · Math Support <span class="muted small">Wed Nov 11 · 10:20 AM</span></div><div class="lc"><span>Long independent task</span>›<span>Used a break card, Returned to task</span>›<span>Proactive brief break</span></div><div class="ln">“Took the break card on his own, back at work in about 5 min.”</div></div></div>
+      <div class="le" data-t="positive" data-s="Alex M."><div class="ld pos"></div><div><div class="lh"><b>Alex M.</b> · Science <span class="muted small">Tue Nov 10 · 9:35 AM</span></div><div class="lc"><span>Activity transition</span>›<span>Transitioned smoothly</span>›<span>Visual schedule</span></div></div></div>
+      <div class="le" data-t="incident" data-s="John D."><div class="ld"></div><div><div class="lh"><b>John D.</b> · Science <span class="muted small">Mon Nov 9 · 9:20 AM</span></div><div class="lc"><span>Long independent task</span>›<span>Work refusal</span>›<span>Offered a break</span></div><div class="ln">“Pushed the reading away; break offered, finished a shorter section after.”</div></div></div>
+      <div class="le" data-t="incident" data-s="Alex M."><div class="ld"></div><div><div class="lh"><b>Alex M.</b> · English Support <span class="muted small">Fri Nov 6 · 8:40 AM</span></div><div class="lc"><span>Activity transition</span>›<span>Left designated area</span>›<span>Verbal redirection</span></div></div></div>
+      <div class="le" data-t="positive" data-s="Maya R."><div class="ld pos"></div><div><div class="lh"><b>Maya R.</b> · Science <span class="muted small">Thu Nov 5 · 9:25 AM</span></div><div class="lc"><span>Unclear directions</span>›<span>Asked for help</span>›<span>Verbal redirection</span></div></div></div>
     </div>
-
-    <div class="row" style="margin-top:18px;gap:24px;align-items:flex-start">
-      <div><label class="lbl">Intensity (optional)</label><div class="seg" id="intSeg"><button>Low</button><button>Medium</button><button>High</button></div></div>
-      <div><label class="lbl">Outcome</label><div class="seg" id="outSeg"><button>Re-engaged</button><button>Partly</button><button>Ended activity</button></div></div>
-      <div style="flex:1;min-width:240px"><label class="lbl">Add a note (optional)</label><div class="input" style="color:var(--muted)">Anything else worth remembering… 🎙 <span class="small">(voice is a placeholder)</span></div></div>
-    </div>
+    <a class="src" style="display:inline-block;margin-top:10px">View full history in Students →</a>
   </div>
-
-  <div class="card draft" style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-    <div style="flex:1;min-width:260px"><span class="pill amber">Draft — review required</span>
-      <div id="summary" style="margin-top:8px" class="muted">Choose at least a behavior to review your entry.</div></div>
-    <div class="row"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn primary" id="saveBtn" disabled style="opacity:.5">Save observation</button></div>
   </div>
-  <div class="disclaimer">You verify every field before saving. Nothing is filled in on its own — quick fills are shortcuts you can edit.</div>
 
   <div class="overlay" id="overlay"><div class="sheet">
     <div class="sh-head"><button class="back" id="pBack">←</button><b id="pTitle">Antecedent</b><span></span></div>
@@ -280,7 +325,7 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
     <div class="input" style="margin-top:12px"><input id="pDesc" placeholder="Description (optional)"></div>
     <button class="btn primary" id="pDone" style="width:100%;margin-top:12px;padding:13px;border-radius:999px">Done</button>
   </div></div>
-  <div class="toast" id="toast">Saved — added to John D.'s timeline (preview only)</div>
+  <div class="toast" id="toast">Saved — added to the log and John D.'s timeline (preview only)</div>
 </section>
 
 <!-- ================= PREP ================= -->
@@ -412,45 +457,58 @@ btns.forEach(b=>b.addEventListener('click',()=>{
 }));
 
 const OPT={
- A:["Activity interrupted","Activity denied","Activity transition","Divided attention","Given corrective feedback","Given demand / task","Long independent task","Unclear directions","Left alone","Presence of a specific person","Redirection","Told to wait","Unexpected change"],
+ A:["Activity interrupted","Activity denied","Activity transition","Divided attention","Given corrective feedback","Given demand / task","Long independent task","Unclear directions","Group work change","Left alone","Presence of a specific person","Redirection","Told to wait","Unexpected change"],
  Bc:["Left designated area","Property misuse","Property destruction","Verbal outburst","Work refusal","Disengaged / sleeping","Threat","Physical contact with others"],
  Bp:["Used a break card","Asked for help","Returned to task","Transitioned smoothly","Completed task","Joined group calmly"],
- C:["Behavior ignored","Blocked","Given another activity","Given preferred item","Left alone","Offered a break","Peer remarks","Removed from activity","Reprimand","Task shortened / chunked","Verbal redirection"],
+ C:["Behavior ignored","Blocked","Given another activity","Given preferred item","Left alone","Offered a break","Peer remarks","Removed from activity","Reprimand","Task shortened / chunked","Verbal redirection","Positive interaction"],
  P:["Countdown before transitions","Offer choices","Positive interaction","Proactive brief break","Reduce unstructured time","Self-monitoring check-in","Teach expected behavior","Timed work intervals","Transition support","Use of clear expectations","Visual schedule","Chunked directions","None","Other"]};
-const TITLE={A:"Antecedent",B:"Behavior",C:"Consequence / Response",P:"Support used"};
+const TITLE={A:"Antecedent — before",B:"Behavior — observed",C:"Consequence — after",P:"Support used"};
 const QUICK={challenge:[
- ["Long task → Work refusal → Break offered",{A:["Long independent task"],B:["Work refusal"],C:["Offered a break"],P:["Chunked directions"]}],
- ["Transition → Left area → Redirection",{A:["Activity transition"],B:["Left designated area"],C:["Verbal redirection"],P:["Countdown before transitions"]}],
+ ["Long task → Work refusal → Break",{A:["Long independent task"],B:["Work refusal"],C:["Offered a break"],P:["Chunked directions"]}],
+ ["Transition → Left area",{A:["Activity transition"],B:["Left designated area"],C:["Verbal redirection"],P:["Countdown before transitions"]}],
  ["Unclear directions → Property misuse",{A:["Unclear directions"],B:["Property misuse"],C:["Task shortened / chunked"],P:["Use of clear expectations"]}]],
  positive:[
  ["Break card → Returned to task",{A:["Long independent task"],B:["Used a break card","Returned to task"],C:["Offered a break"],P:["Proactive brief break"]}],
  ["Transition went smoothly",{A:["Activity transition"],B:["Transitioned smoothly"],C:["Positive interaction"],P:["Countdown before transitions"]}]]};
-let S={A:[],B:[],C:[],P:[]},type="challenge",cur=null,tmp=[];
+const EMPTY=()=>({A:[],B:[],C:[],P:[]});
+let S=EMPTY(),type="challenge",cur=null,tmp=[],fT="all",fS="all";
 const $=id=>document.getElementById(id);
-function bList(){return type==="challenge"?OPT.Bc:OPT.Bp}
+const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function stu(){return document.querySelector("#stuRow .pick.on").textContent}
 function render(){
- ["A","B","C","P"].forEach(k=>{const t=document.querySelector(`.tile[data-k=${k}]`);const v=S[k];
-  $("v"+k).textContent=v.length?v.join(" · "):"Tap to choose";t.classList.toggle("set",v.length>0)});
- $("progress").textContent=["A","B","C","P"].filter(k=>S[k].length).length+" of 4 added";
- const ok=S.B.length>0;const sb=$("saveBtn");sb.disabled=!ok;sb.style.opacity=ok?1:.5;
- $("summary").innerHTML=ok?`<b>John D.</b> · Science · 9:15 AM<br>Before: ${S.A.join(", ")||"<i>Not documented</i>"}<br>Observed: ${S.B.join(", ")}<br>Response: ${S.C.join(", ")||"<i>Not documented</i>"}<br>Support: ${S.P.join(", ")||"<i>Not documented</i>"}`:"Choose at least a behavior to review your entry.";
+ ["A","B","C","P"].forEach(k=>{$("v"+k).innerHTML=S[k].length?S[k].map(x=>`<span class="tag">${esc(x)}</span>`).join(""):'<span class="none">Not set</span>'});
+ const note=$("noteTxt").value.trim(),ok=S.B.length>0||note.length>0;
+ const sb=$("saveBtn");sb.disabled=!ok;sb.style.opacity=ok?1:.5;
+ $("summary").textContent=ok?`${stu()} · Science · 9:15 AM — ${S.B.join(", ")||"behavior not documented"}`:"Choose a behavior or write a note to save.";
  const q=$("quick");q.querySelectorAll(".qchip").forEach(e=>e.remove());
- QUICK[type].forEach(([l,v])=>{const b=document.createElement("button");b.className="qchip";b.textContent="⚡ "+l;b.onclick=()=>{S=JSON.parse(JSON.stringify(v));render()};q.appendChild(b)});
+ QUICK[type].forEach(([l,v])=>{const b=document.createElement("button");b.className="qchip";b.textContent=l;b.onclick=()=>{S=JSON.parse(JSON.stringify(v));render()};q.appendChild(b)});
+ applyFilter();
 }
-function openP(k){cur=k;tmp=[...S[k]];$("pTitle").textContent=TITLE[k];$("pSearch").value="";$("pDesc").value="";drawList();$("overlay").classList.add("open")}
-function drawList(){const f=$("pSearch").value.toLowerCase();const src=cur==="B"?bList():OPT[cur];
+function applyFilter(){let n=0;document.querySelectorAll("#logList .le").forEach(e=>{const show=(fT==="all"||e.dataset.t===fT)&&(fS==="all"||e.dataset.s===fS);e.classList.toggle("hide",!show);if(show)n++});$("logCount").textContent=n+" entries"}
+function openP(k){cur=k;tmp=[...S[k]];$("pTitle").textContent=TITLE[k];$("pSearch").value="";$("pDesc").value="";drawList();$("overlay").classList.add("open");$("pSearch").focus()}
+function drawList(){const f=$("pSearch").value.toLowerCase();const src=cur==="B"?(type==="challenge"?OPT.Bc:OPT.Bp):OPT[cur];
  $("pList").innerHTML="";src.filter(o=>o.toLowerCase().includes(f)).forEach(o=>{const d=document.createElement("div");
   d.className="opt"+(tmp.includes(o)?" sel":"");d.innerHTML=`<span>${o}</span><span class="circ">${tmp.includes(o)?"✓":""}</span>`;
   d.onclick=()=>{tmp=tmp.includes(o)?tmp.filter(x=>x!==o):[...tmp,o];drawList()};$("pList").appendChild(d)})}
-document.querySelectorAll(".tile").forEach(t=>t.onclick=()=>openP(t.dataset.k));
+document.querySelectorAll(".choose").forEach(t=>t.onclick=()=>openP(t.dataset.k));
 $("pSearch").oninput=drawList;
 $("pDone").onclick=()=>{const d=$("pDesc").value.trim();S[cur]=d?[...tmp,"“"+d+"”"]:tmp;$("overlay").classList.remove("open");render()};
 $("pBack").onclick=()=>$("overlay").classList.remove("open");
-document.querySelectorAll("#typeSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x===b));type=b.dataset.t;S={A:[],B:[],C:[],P:[]};render()});
+document.querySelectorAll("#typeSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x===b));type=b.dataset.t;S=EMPTY();render()});
 ["intSeg","outSeg"].forEach(id=>document.querySelectorAll("#"+id+" button").forEach(b=>b.onclick=()=>document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b&&!x.classList.contains("on")))));
-document.querySelectorAll("#stuRow .pick").forEach(p=>p.onclick=()=>document.querySelectorAll("#stuRow .pick").forEach(x=>x.classList.toggle("on",x===p)));
-$("clearBtn").onclick=()=>{S={A:[],B:[],C:[],P:[]};render()};
-$("saveBtn").onclick=()=>{const t=$("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);S={A:[],B:[],C:[],P:[]};render()};
+document.querySelectorAll("#stuRow .pick").forEach(p=>p.onclick=()=>{document.querySelectorAll("#stuRow .pick").forEach(x=>x.classList.toggle("on",x===p));render()});
+document.querySelectorAll("#logFilters .fchip").forEach(c=>c.onclick=()=>{
+ const isT=c.dataset.f!==undefined;document.querySelectorAll("#logFilters .fchip").forEach(x=>{if((x.dataset.f!==undefined)===isT)x.classList.toggle("on",x===c)});
+ if(isT)fT=c.dataset.f;else fS=c.dataset.s;applyFilter()});
+$("noteTxt").oninput=render;
+$("clearBtn").onclick=()=>{S=EMPTY();$("noteTxt").value="";render()};
+$("saveBtn").onclick=()=>{
+ const note=$("noteTxt").value.trim(),nd='<i>Not documented</i>',j=a=>a.length?a.map(esc).join(", "):nd;
+ const e=document.createElement("div");e.className="le new";e.dataset.t=type==="positive"?"positive":"incident";e.dataset.s=stu();
+ e.innerHTML=`<div class="ld ${type==="positive"?"pos":""}"></div><div><div class="lh"><b>${stu()}</b> · Science <span class="muted small">Just now · Thu Nov 12 · 9:15 AM</span></div><div class="lc"><span>${j(S.A)}</span>›<span>${j(S.B)}</span>›<span>${j(S.C)}</span></div>${note?`<div class="ln">“${esc(note)}”</div>`:""}</div>`;
+ $("logList").prepend(e);
+ const t=$("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);
+ S=EMPTY();$("noteTxt").value="";render()};
 render();
 </script>
 </body>
