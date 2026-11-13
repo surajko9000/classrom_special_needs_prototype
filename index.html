@@ -183,6 +183,40 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 .lc span{background:var(--warm);color:var(--ink);border-radius:6px;padding:2px 8px}
 .ln{font-size:13.5px;color:#41505e;margin-top:5px;font-style:italic}
 @media(max-width:700px){.frow{grid-template-columns:1fr auto}.frow .fv{grid-column:1/3;order:3}}
+.cstrip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.cp{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:13px;display:flex;flex-direction:column;gap:2px;min-width:126px}
+.cp b{font-size:14px}.cp small{color:var(--muted)}
+.cp.on{border-color:var(--blue);background:var(--blue-soft)}
+.cp.now b::before{content:"● ";color:var(--teal)}
+.cp.done{opacity:.6}
+.cp:focus-visible,.srow:focus-visible,.att-i:focus-visible{outline:3px solid var(--teal)}
+.att-i{display:flex;gap:12px;padding:12px 6px;border-bottom:1px solid var(--line);cursor:pointer;align-items:flex-start;border-radius:8px}
+.att-i:last-child{border:0}.att-i:hover{background:var(--warm)}
+.att-sub{font-size:13px;color:var(--muted)}
+.modalwrap{display:none;position:fixed;inset:0;background:rgba(31,42,55,.45);z-index:25;align-items:center;justify-content:center;padding:16px}
+.modalwrap.open{display:flex}
+.modal{background:var(--card);border-radius:18px;width:min(540px,100%);max-height:92vh;overflow:auto;padding:22px}
+.modal h2{font-size:20px;margin-bottom:14px}
+.fi{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+textarea.fi{min-height:70px}
+.fg{margin-bottom:12px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cbs{display:flex;flex-wrap:wrap;gap:8px}
+.cbs label{display:flex;gap:6px;align-items:center;background:var(--warm);padding:6px 10px;border-radius:8px;font-size:14px;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:500;margin:0}
+.err{color:#a4402f;font-size:13px;margin-top:4px}
+.srow{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;cursor:pointer;width:100%}
+.srow:hover{background:var(--warm)}.srow.on{background:var(--blue-soft)}
+.plan{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.plan:last-child{border:0}
+.tbtn{all:unset;cursor:pointer;color:var(--blue);font-size:13px;font-weight:600;padding:4px 8px;border-radius:8px}
+.tbtn:hover{background:var(--blue-soft)}.tbtn.danger{color:#a4402f}.tbtn.danger:hover{background:#fbe9e5}
+.tbtn:focus-visible{outline:3px solid var(--teal)}
+.tagx{display:inline-block;background:var(--warm);border-radius:8px;padding:4px 10px;font-size:13.5px;margin:2px 4px 2px 0}
+.draftpill{background:var(--amber-soft);color:var(--amber);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;margin-left:6px}
+.le .acts{margin-top:6px;display:flex;gap:6px}
+.le.draftrow{background:#fffdf5;border-radius:10px;padding:12px 8px}
+.ld.dr{background:var(--amber)}
+.clock button.chip{border:0;cursor:pointer;font-family:inherit}.clock button.chip:focus-visible{outline:3px solid var(--teal)}
 </style>
 </head>
 <body>
@@ -202,61 +236,25 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 
 <div>
 <header>
-  <div class="muted small">Thursday, November 12 · <b style="color:var(--ink)">9:00 AM</b></div>
-  <div class="clock">
-    <span>⏱ <b>Demo clock</b></span>
-    <span class="chip">Thu</span>
-    <span class="chip on">9:00</span>
-    <span class="chip">10:00</span>
-    <span class="chip">13:00</span>
-    <span class="chip">Next class ▸</span>
-    <span class="chip">▶ Play</span>
-  </div>
+  <div class="muted small" id="hdate"></div>
+  <div class="clock" id="hclock"></div>
 </header>
 
 <main>
 <!-- ================= TODAY ================= -->
 <section class="page show" id="today">
-  <div class="title"><div><h1>Good morning, Morgan</h1><p>Here's what to prepare for your day.</p></div></div>
-
-  <div class="card hero">
-    <div>
-      <span class="pill now">● In session now</span>
-      <h2>Science · Period 2</h2>
-      <div class="sub">9:00 – 9:50 AM · Room 214 · 3 students · Planned: Independent reading, then group lab</div>
-      <div style="margin-top:14px;display:flex;gap:10px"><button class="btn light">Open class prep</button><button class="btn" style="background:rgba(255,255,255,.18);color:#fff">View roster</button></div>
-    </div>
-    <div class="count"><div class="sub">ends in</div><div class="big">50 min</div><div class="sub">Next: Math Support · 10:00</div></div>
-  </div>
-
+  <div class="title"><div><h1 id="greet">Good morning, Morgan</h1><p>Here's what to prepare for your day. Tap a class to look ahead.</p></div></div>
+  <div class="cstrip" id="cstrip"></div>
+  <div id="hero"></div>
   <div class="grid g-main" style="margin-top:20px">
     <div>
-      <div class="sec" style="margin-top:0"><h3>Preparation reminders for this class</h3><span>2 to review</span></div>
-      <div class="grid">
-        <div class="card reminder">
-          <div class="who"><div class="avatar a1">JD</div><div><b>John D.</b><div class="muted small">Independent reading segment</div></div><span class="pill teal" style="margin-left:auto">Preparation reminder</span></div>
-          <div class="evidence">Three prior observations during independent science reading mention task difficulty (Oct 8, Oct 22, Nov 3). Two more recent notes describe him re-engaging after a structured break. <a>View 5 source observations</a></div>
-          <div class="strategy"><div><b>Documented support:</b> Chunk the reading into shorter segments with clear written directions; have break options ready.</div></div>
-          <div class="row"><button class="btn primary">Add to prep</button><button class="btn ghost">Dismiss for today</button></div>
-        </div>
-        <div class="card reminder">
-          <div class="who"><div class="avatar a2">AM</div><div><b>Alex M.</b><div class="muted small">Transition to group lab</div></div><span class="pill teal" style="margin-left:auto">Preparation reminder</span></div>
-          <div class="evidence">Transitions went smoothly in 4 of 6 notes when a visual cue was shown ahead of time (Oct 15 – Nov 10). <a>View 6 source observations</a></div>
-          <div class="strategy"><div><b>Documented support:</b> Show the visual schedule and give a 5-minute transition warning.</div></div>
-          <div class="row"><button class="btn primary">Add to prep</button><button class="btn ghost">Dismiss for today</button></div>
-        </div>
-      </div>
+      <div class="sec" style="margin-top:0"><h3 id="remTitle"></h3><span id="remCount"></span></div>
+      <div class="grid" id="rems"></div>
       <div class="disclaimer">Reminders are drawn from teacher-recorded observations and approved supports. They show associations, not causes, and are not predictions about any student.</div>
     </div>
-
     <div class="grid" style="align-content:start">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between"><h3>This week</h3><a class="src">Details</a></div>
-        <div style="font-size:28px;font-weight:700;margin-top:6px">4 <span style="font-size:14px;font-weight:500" class="muted">observations</span></div>
-        <div class="muted small">3 positive supports · 1 incident</div>
-        <div class="snap"><i style="height:40%"></i><i style="height:70%"></i><i style="height:30%"></i><i class="hi" style="height:90%"></i><i style="height:20%"></i></div>
-        <div class="axis" style="margin-top:4px"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span></div>
-      </div>
+      <div class="card" id="attn"></div>
+      <div class="card" id="week"></div>
     </div>
   </div>
 </section>
@@ -269,11 +267,11 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
   <div class="grid" style="grid-template-columns:1.1fr 1fr;align-items:start">
   <div class="card">
     <div class="row" style="margin-bottom:14px">
-      <div style="flex:1;min-width:140px"><label class="lbl">Class (auto)</label><div class="input">Science · Period 2</div></div>
-      <div style="flex:1;min-width:140px"><label class="lbl">Time (editable)</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
+      <div style="flex:1;min-width:140px"><label class="lbl">Class (auto)</label><div class="input" id="lgClass"></div></div>
+      <div style="flex:1;min-width:140px"><label class="lbl">Time (editable)</label><div class="input" id="lgTime"></div></div>
     </div>
     <label class="lbl">Student</label>
-    <div class="row" id="stuRow" style="margin-bottom:16px"><span class="pill pick on">John D.</span><span class="pill pick">Alex M.</span><span class="pill pick">Maya R.</span></div>
+    <div class="row" id="stuRow" style="margin-bottom:16px"></div>
 
     <div class="row" style="margin-bottom:14px" id="quick"><span class="small muted">⚡ Quick fill:</span></div>
 
@@ -294,26 +292,15 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 
     <div class="savebar">
       <div><span class="pill amber">Draft — review required</span><div class="small muted" id="summary" style="margin-top:6px"></div></div>
-      <div class="row"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn primary" id="saveBtn" disabled style="opacity:.5">Save observation</button></div>
+      <div class="row"><button class="btn ghost" id="clearBtn">Clear</button><button class="btn ghost" id="draftBtn">Save as draft</button><button class="btn primary" id="saveBtn" disabled style="opacity:.5">Save observation</button></div>
     </div>
-    <div class="small muted" style="margin-top:10px">Quick fills are shortcuts, not facts. Anything you don't set is saved as “Not documented”.</div>
+    <div class="small muted" style="margin-top:10px">Quick fills are shortcuts, not facts. Anything you don't set is saved as “Not documented”. Not finished? Save as draft and it will wait in your log and on Today.</div>
   </div>
 
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:baseline"><h3>Recent log</h3><span class="small muted" id="logCount"></span></div>
-    <div class="row" style="margin:10px 0" id="logFilters">
-      <span class="fchip on" data-f="all">All</span><span class="fchip" data-f="incident">Incidents</span><span class="fchip" data-f="positive">Positive</span>
-      <span class="fsep"></span>
-      <span class="fchip on" data-s="all">Everyone</span><span class="fchip" data-s="John D.">John</span><span class="fchip" data-s="Alex M.">Alex</span><span class="fchip" data-s="Maya R.">Maya</span>
-    </div>
-    <div id="logList" class="loglist">
-      <div class="le" data-t="positive" data-s="Maya R."><div class="ld pos"></div><div><div class="lh"><b>Maya R.</b> · Life Skills <span class="muted small">Wed Nov 11 · 1:20 PM</span></div><div class="lc"><span>Group work change</span>›<span>Joined group calmly</span>›<span>Positive interaction</span></div><div class="ln">“Had advance notice about the new groups, joined without prompting.”</div></div></div>
-      <div class="le" data-t="positive" data-s="John D."><div class="ld pos"></div><div><div class="lh"><b>John D.</b> · Math Support <span class="muted small">Wed Nov 11 · 10:20 AM</span></div><div class="lc"><span>Long independent task</span>›<span>Used a break card, Returned to task</span>›<span>Proactive brief break</span></div><div class="ln">“Took the break card on his own, back at work in about 5 min.”</div></div></div>
-      <div class="le" data-t="positive" data-s="Alex M."><div class="ld pos"></div><div><div class="lh"><b>Alex M.</b> · Science <span class="muted small">Tue Nov 10 · 9:35 AM</span></div><div class="lc"><span>Activity transition</span>›<span>Transitioned smoothly</span>›<span>Visual schedule</span></div></div></div>
-      <div class="le" data-t="incident" data-s="John D."><div class="ld"></div><div><div class="lh"><b>John D.</b> · Science <span class="muted small">Mon Nov 9 · 9:20 AM</span></div><div class="lc"><span>Long independent task</span>›<span>Work refusal</span>›<span>Offered a break</span></div><div class="ln">“Pushed the reading away; break offered, finished a shorter section after.”</div></div></div>
-      <div class="le" data-t="incident" data-s="Alex M."><div class="ld"></div><div><div class="lh"><b>Alex M.</b> · English Support <span class="muted small">Fri Nov 6 · 8:40 AM</span></div><div class="lc"><span>Activity transition</span>›<span>Left designated area</span>›<span>Verbal redirection</span></div></div></div>
-      <div class="le" data-t="positive" data-s="Maya R."><div class="ld pos"></div><div><div class="lh"><b>Maya R.</b> · Science <span class="muted small">Thu Nov 5 · 9:25 AM</span></div><div class="lc"><span>Unclear directions</span>›<span>Asked for help</span>›<span>Verbal redirection</span></div></div></div>
-    </div>
+    <div class="row" style="margin:10px 0" id="logFilters"></div>
+    <div id="logList" class="loglist"></div>
     <a class="src" style="display:inline-block;margin-top:10px">View full history in Students →</a>
   </div>
   </div>
@@ -365,42 +352,15 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 
 <!-- ================= STUDENTS ================= -->
 <section class="page" id="students">
-  <div class="title"><div><h1>Students</h1><p>Your caseload for Period 2 – 5</p></div><div class="input" style="width:260px;color:var(--muted)">🔍 Search students…</div></div>
-  <div class="grid g-main" style="grid-template-columns:1fr 1.6fr">
-    <div class="card" style="padding:8px 12px">
-      <table>
-        <tr><th>Student</th><th>Grade</th><th>Classes</th></tr>
-        <tr style="background:var(--blue-soft)"><td><b>John D.</b></td><td>10</td><td class="small">Sci · Math · Life</td></tr>
-        <tr><td><b>Alex M.</b></td><td>11</td><td class="small">Eng · Sci · Life</td></tr>
-        <tr><td><b>Maya R.</b></td><td>9</td><td class="small">Sci · Math</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <div class="row" style="gap:14px;margin-bottom:14px"><div class="avatar a1" style="width:52px;height:52px;font-size:18px">JD</div><div><h2>John D.</h2><div class="muted small">Grade 10 · Science, Math Support, Life Skills</div></div><button class="btn primary" style="margin-left:auto">Handoff briefing</button></div>
-      <div class="grid g-2" style="margin-bottom:16px">
-        <div class="evidence"><b>Strengths</b><br>Hands-on labs, helps peers with tools, strong verbal reasoning.</div>
-        <div class="evidence"><b>Approved supports</b><br>Chunked reading · clear written directions · planned break options.</div>
-      </div>
-      <div class="tabs"><span class="on">Timeline</span><span>Interventions</span><span>Progress</span><span style="margin-left:auto">Filter: All classes ▾</span></div>
-      <div class="tl">
-        <div class="ev"><div class="small muted">Today · 9:15 AM · Science · Independent reading</div><b>Workbook tossed after confusing instructions</b><div class="small muted">Break offered, reading chunked; returned to task <span class="pill amber">draft</span></div></div>
-        <div class="ev pos"><div class="small muted">Nov 3 · Science</div><b>Used break card and returned to reading</b><div class="small muted">Re-engaged within 5 minutes · positive</div></div>
-        <div class="ev pos"><div class="small muted">Oct 27 · Math Support</div><b>Asked for a shorter segment before getting frustrated</b><div class="small muted">Self-advocacy · positive</div></div>
-        <div class="ev int"><div class="small muted">Oct 5 · Intervention started</div><b>Chunk reading instructions + planned break options</b></div>
-        <div class="ev"><div class="small muted">Sep 29 · Science · Independent reading</div><b>Pushed workbook away during a long reading task</b><div class="small muted">Teacher check-in; task not finished</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:18px">
-    <div style="display:flex;justify-content:space-between"><h3>Handoff briefing <span class="muted small" style="font-weight:400">— preview</span></h3><span class="pill amber">Draft — review required</span></div>
-    <div class="grid g-3" style="margin-top:12px">
-      <div class="evidence"><b>What has helped</b><br>Chunked reading with written directions; break cards. <a class="src">sources (7)</a></div>
-      <div class="evidence"><b>Settings that need preparation</b><br>Long independent reading blocks in Science. <a class="src">sources (5)</a></div>
-      <div class="evidence"><b>What has improved</b><br>More frequent re-engagement after breaks in recent weeks. <a class="src">sources (4)</a></div>
-    </div>
+  <div class="title"><div><h1>Students</h1><p>Your caseload. Add, edit, and keep each student's supports and plans up to date.</p></div>
+    <div class="row"><div class="input" style="width:230px"><input id="sSearch" placeholder="🔍 Search students…"></div><button class="btn primary" onclick="studentForm()">＋ Add student</button></div></div>
+  <div class="grid" style="grid-template-columns:300px 1fr;align-items:start">
+    <div class="card" style="padding:10px" id="roster"></div>
+    <div id="sdetail"></div>
   </div>
 </section>
+
+<div class="modalwrap" id="modal"><div class="modal" id="mbody"></div></div>
 
 <!-- ================= INSIGHTS ================= -->
 <section class="page" id="insights">
@@ -448,14 +408,125 @@ td{padding:12px 10px;border-bottom:1px solid var(--line)}
 </div>
 
 <script>
-const btns=document.querySelectorAll('[data-p]');
-btns.forEach(b=>b.addEventListener('click',()=>{
-  const id=b.dataset.p;
-  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===id));
-  document.querySelectorAll('nav button').forEach(n=>n.classList.toggle('active',n.dataset.p===id));
-  window.scrollTo(0,0);
-}));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TODAY="2026-11-12";
+const fmt=m=>{let h=Math.floor(m/60),mm=m%60;const ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+String(mm).padStart(2,"0")+" "+ap};
+const fmtD=d=>new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const fmtDur=m=>m>=60?Math.floor(m/60)+" h"+(m%60?" "+m%60+" min":""):m+" min";
+const CL=[
+ {id:"P1",name:"English Support",per:"Period 1",s:480,e:530,room:"108",plan:"Paragraph writing workshop",short:"Eng"},
+ {id:"P2",name:"Science",per:"Period 2",s:540,e:590,room:"214",plan:"Independent reading, then group lab",short:"Sci"},
+ {id:"P3",name:"Math Support",per:"Period 3",s:600,e:650,room:"112",plan:"Fractions practice in small groups",short:"Math"},
+ {id:"PL",name:"Planning",per:"Planning",s:660,e:710,room:"214",plan:"No students scheduled",short:"Plan"},
+ {id:"P5",name:"Life Skills",per:"Period 5",s:780,e:830,room:"120",plan:"Following a multi-step recipe card",short:"Life"}];
+const TEACH=CL.filter(c=>c.id!=="PL");
+const REM={
+ P1:[{sid:"s2",ctx:"Moving from writing to share-out",ev:"Transitions went smoothly in 4 of 6 notes when a visual cue was shown ahead of time (Oct 15 – Nov 10).",strat:"Show the visual schedule and give a 5-minute transition warning.",n:6},
+     {sid:"s3",ctx:"Writing workshop",ev:"Two notes mention working more comfortably in a quiet corner during writing (Oct 20, Nov 3).",strat:"Offer the quiet workspace seat and preview any partner-work change.",n:2}],
+ P2:[{sid:"s1",ctx:"Independent reading segment",ev:"Three prior observations during independent science reading mention task difficulty (Oct 8, Oct 22, Nov 3). Two more recent notes describe him re-engaging after a structured break.",strat:"Chunk the reading into shorter segments with clear written directions; have break options ready.",n:5},
+     {sid:"s2",ctx:"Transition to group lab",ev:"Transitions went smoothly in 4 of 6 notes when a visual cue was shown ahead of time (Oct 15 – Nov 10).",strat:"Show the visual schedule and give a 5-minute transition warning.",n:6}],
+ P3:[{sid:"s1",ctx:"Fraction problem sets",ev:"Chunked problem sets and break cards appear in 3 recent notes. On Nov 11 he used a break card on his own and was back at work in about 5 minutes.",strat:"Hand out problem sets in two chunks and keep break cards visible.",n:3},
+     {sid:"s3",ctx:"Small-group fractions practice",ev:"Advance notice of group changes appears in 3 positive notes (Oct 27 – Nov 11).",strat:"Tell her about group assignments before class starts.",n:3}],
+ P5:[{sid:"s3",ctx:"Recipe-card groups",ev:"On Nov 11 she joined a new group calmly after advance notice.",strat:"Share group roles at the start and keep the quiet workspace option open.",n:3},
+     {sid:"s1",ctx:"Following multi-step recipe cards",ev:"Written, numbered steps appear alongside smoother starts in 3 notes.",strat:"Give the recipe as numbered steps with a checkbox for each.",n:3},
+     {sid:"s2",ctx:"Moving between stations",ev:"Transition warnings were documented as helpful in 2 notes.",strat:"Give a 5-minute warning before station changes.",n:2}]};
 
+let students=[
+ {id:"s1",first:"John",li:"D",grade:10,classes:["P2","P3","P5"],strengths:"Hands-on labs, helps peers with tools, strong verbal reasoning.",supports:["Chunked reading","Clear written directions","Planned break options"],
+  plans:[{id:"p1",type:"IEP",title:"Annual IEP",start:"2026-03-12",review:"2027-03-12",status:"Active"},{id:"p2",type:"Classroom support plan",title:"Chunk reading instructions + planned break options",start:"2026-10-05",review:"2026-11-19",status:"Active"}],
+  hb:{helped:"Chunked reading with written directions; break cards.",prep:"Long independent reading blocks in Science.",improved:"More frequent re-engagement after breaks in recent weeks."},archived:false},
+ {id:"s2",first:"Alex",li:"M",grade:11,classes:["P1","P2","P5"],strengths:"Strong visual memory, takes pride in routines, kind with peers.",supports:["Visual schedule","Transition warnings"],
+  plans:[{id:"p3",type:"IEP",title:"Annual IEP",start:"2025-11-17",review:"2026-11-17",status:"In review"}],
+  hb:{helped:"Visual schedule and 5-minute transition warnings.",prep:"Transitions between activities.",improved:"Smoother transitions when a visual cue is shown first."},archived:false},
+ {id:"s3",first:"Maya",li:"R",grade:9,classes:["P1","P2","P3","P5"],strengths:"Creative, thoughtful writer, supports classmates in groups once settled.",supports:["Quiet workspace","Advance notice of group-work changes"],
+  plans:[{id:"p4",type:"IEP",title:"Annual IEP",start:"2026-01-20",review:"2027-01-20",status:"Active"}],
+  hb:{helped:"Quiet workspace and advance notice of group changes.",prep:"Group-work changes.",improved:"Joining new groups calmly more often."},archived:false}];
+let nextS=4,nextP=5,nextE=100;
+const sn=id=>{const s=students.find(x=>x.id===id);return s?s.first+" "+s.li+".":"Student"};
+const av=id=>"a"+(1+Math.max(0,students.findIndex(x=>x.id===id))%3);
+const ini=id=>{const s=students.find(x=>x.id===id);return s?s.first[0]+s.li:"?"};
+const active=()=>students.filter(s=>!s.archived);
+const E=(type,sid,cls,when,A,B,C,note="")=>({id:"e"+(nextE++),kind:"obs",type,sid,cls,when,A,B,C,P:[],note,draft:false});
+let entries=[
+ E("positive","s3","Life Skills","Wed Nov 11 · 1:20 PM",["Group work change"],["Joined group calmly"],["Positive interaction"],"Had advance notice about the new groups, joined without prompting."),
+ E("positive","s1","Math Support","Wed Nov 11 · 10:20 AM",["Long independent task"],["Used a break card","Returned to task"],["Offered a break"],"Took the break card on his own, back at work in about 5 min."),
+ E("positive","s2","Science","Tue Nov 10 · 9:35 AM",["Activity transition"],["Transitioned smoothly"],["Positive interaction"]),
+ E("incident","s1","Science","Mon Nov 9 · 9:20 AM",["Long independent task"],["Work refusal"],["Offered a break"],"Pushed the reading away; break offered, finished a shorter section after."),
+ E("incident","s2","English Support","Fri Nov 6 · 8:40 AM",["Activity transition"],["Left designated area"],["Verbal redirection"]),
+ E("positive","s3","Science","Thu Nov 5 · 9:25 AM",["Unclear directions"],["Asked for help"],["Verbal redirection"]),
+ E("positive","s1","Science","Tue Nov 3 · 9:30 AM",["Long independent task"],["Used a break card","Returned to task"],["Offered a break"],"Re-engaged within 5 minutes."),
+ E("positive","s1","Math Support","Tue Oct 27 · 10:15 AM",["Given demand / task"],["Asked for help"],["Task shortened / chunked"],"Asked for a shorter segment before getting frustrated."),
+ {id:"eint",kind:"int",sid:"s1",when:"Mon Oct 5",title:"Support plan started: Chunk reading instructions + planned break options"},
+ E("incident","s1","Science","Tue Sep 29 · 9:20 AM",["Long independent task"],["Work refusal"],["Verbal redirection"],"Pushed workbook away during a long reading task; task not finished.")];
+entries.unshift({id:"e0",kind:"obs",type:"incident",sid:"s2",cls:"English Support",when:"Wed Nov 11 · 8:25 AM",A:["Activity transition"],B:[],C:[],P:[],note:"Needed a second reminder to move to share-out. Add what helped.",draft:true});
+
+let clock=540,view="P2",editing=null,logStu="s1",fT="all",fS="all",savedCount=0,playing=null,selStu="s1",sQuery="";
+let type="challenge",S={A:[],B:[],C:[],P:[]},cur=null,tmp=[];
+const prepAdded=new Set(),dismissed=new Set();
+const EMPTY=()=>({A:[],B:[],C:[],P:[]});
+const status=c=>clock>=c.s&&clock<c.e?"now":clock<c.s?"up":"done";
+const nextUp=()=>CL.find(c=>c.s>clock);
+const defView=()=>(CL.find(c=>clock>=c.s&&clock<c.e)||nextUp()||CL[CL.length-1]).id;
+const logClass=()=>{const c=CL.find(c=>clock>=c.s&&clock<c.e);return c||CL.filter(c=>c.s<=clock).pop()||CL[0]};
+
+function goto(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("show",p.id===id));
+ document.querySelectorAll("nav button").forEach(n=>n.classList.toggle("active",n.dataset.p===id));window.scrollTo(0,0);renderAll()}
+function setClock(m){clock=m;view=defView();renderAll()}
+function stepClock(){const n=nextUp();setClock(n?n.s:480)}
+function togglePlay(){if(playing){clearInterval(playing);playing=null}else{playing=setInterval(stepClock,2500)}renderHeader()}
+function setView(id){view=id;renderToday()}
+
+function renderHeader(){
+ $("hdate").innerHTML=`Thursday, November 12 · <b style="color:var(--ink)">${fmt(clock)}</b>`;
+ $("hclock").innerHTML=`<span>⏱ <b>Demo clock</b></span><span class="chip" style="cursor:default">Thu</span>`+
+  [480,540,600,660,780].map(m=>`<button class="chip ${m===clock?"on":""}" onclick="setClock(${m})">${Math.floor(m/60)}:00</button>`).join("")+
+  `<button class="chip" onclick="stepClock()">Next class ▸</button><button class="chip ${playing?"on":""}" onclick="togglePlay()">${playing?"❚❚ Pause":"▶ Play"}</button>`}
+
+function upcomingReviews(){const r=[];students.filter(s=>!s.archived).forEach(s=>s.plans.forEach(p=>{if(p.review>=TODAY&&p.status!=="Ended")r.push({s,p})}));return r.sort((a,b)=>a.p.review<b.p.review?-1:1).slice(0,2)}
+
+function renderToday(){
+ $("greet").textContent=(clock<720?"Good morning":"Good afternoon")+", Morgan";
+ $("cstrip").innerHTML=CL.map(c=>`<button class="cp ${status(c)} ${c.id===view?"on":""}" onclick="setView('${c.id}')"><b>${c.per==="Planning"?"Planning":c.per+" · "+c.name}</b><small>${fmt(c.s)} – ${fmt(c.e)}</small></button>`).join("");
+ const c=CL.find(x=>x.id===view),st=status(c),idx=CL.indexOf(c),nx=CL[idx+1];
+ const n=active().filter(s=>s.classes.includes(c.id)).length;
+ const pill=st==="now"?"● In session now":st==="up"?(c===nextUp()?"Up next":"Later today"):"Earlier today";
+ const big=st==="now"?fmtDur(c.e-clock):st==="up"?fmtDur(c.s-clock):"Done",lab=st==="now"?"ends in":st==="up"?"starts in":"finished";
+ $("hero").innerHTML=`<div class="card hero"><div><span class="pill now">${pill}</span><h2>${c.id==="PL"?"Planning period":c.name+" · "+c.per}</h2>
+  <div class="sub">${fmt(c.s)} – ${fmt(c.e)} · Room ${c.room} · ${c.id==="PL"?"No students scheduled":n+" student"+(n===1?"":"s")+" · Planned: "+c.plan}</div>
+  <div style="margin-top:14px;display:flex;gap:10px">${c.id==="PL"?`<button class="btn light" onclick="setView('${nextUp()?nextUp().id:"P5"}')">Preview next class</button>`:`<button class="btn light" onclick="goto('prep')">Open class prep</button><button class="btn" style="background:rgba(255,255,255,.18);color:#fff" onclick="goto('students')">View roster</button>`}</div></div>
+  <div class="count"><div class="sub">${lab}</div><div class="big">${big}</div><div class="sub">${nx?"Next: "+nx.name+" · "+fmt(nx.s):"Last class of the day"}</div></div></div>`;
+ if(c.id==="PL"){
+  const dr=entries.filter(e=>e.draft).length,rv=upcomingReviews()[0];
+  $("remTitle").textContent="Good uses of planning time";$("remCount").textContent="";
+  $("rems").innerHTML=`<div class="card reminder"><b>Finish ${dr} draft observation${dr===1?"":"s"}</b><div class="evidence">Drafts you saved are waiting in your log.</div><div class="row"><button class="btn primary" onclick="goto('log')">Open log</button></div></div>
+   <div class="card reminder"><b>Look ahead to ${CL[4].name}</b><div class="evidence">${REM.P5.length} preparation reminders for ${fmt(CL[4].s)}.</div><div class="row"><button class="btn primary" onclick="setView('P5')">Preview class</button></div></div>`+
+   (rv?`<div class="card reminder"><b>Prepare for ${rv.p.type} review · ${sn(rv.s.id)}</b><div class="evidence">${fmtD(rv.p.review)} · The student's supports and linked observations are on their profile.</div><div class="row"><button class="btn primary" onclick="openStu('${rv.s.id}')">Open profile</button></div></div>`:"");
+ }else{
+  const list=(REM[c.id]||[]).filter(r=>students.some(s=>s.id===r.sid&&!s.archived&&s.classes.includes(c.id))&&!dismissed.has(c.id+r.sid));
+  $("remTitle").textContent="Preparation reminders for this class";$("remCount").textContent=list.length+" to review";
+  $("rems").innerHTML=list.length?list.map(r=>{const k=c.id+":"+r.sid,added=prepAdded.has(k);return `<div class="card reminder">
+   <div class="who"><div class="avatar ${av(r.sid)}">${ini(r.sid)}</div><div><b>${sn(r.sid)}</b><div class="muted small">${r.ctx}</div></div><span class="pill teal" style="margin-left:auto">Preparation reminder</span></div>
+   <div class="evidence">${r.ev} <a onclick="openStu('${r.sid}')">View ${r.n} source observations</a></div>
+   <div class="strategy"><div><b>Documented support:</b> ${r.strat}</div></div>
+   <div class="row"><button class="btn ${added?"ghost":"primary"}" onclick="addPrep('${k}')">${added?"✓ Added to prep":"Add to prep"}</button><button class="btn ghost" onclick="dismissRem('${c.id}${r.sid}')">Dismiss for today</button></div></div>`}).join(""):
+   `<div class="card muted">No reminders for this class. Add students to it from the Students tab.</div>`;
+ }
+ const dr=entries.filter(e=>e.draft),rv=upcomingReviews();
+ $("attn").innerHTML=`<h3 style="margin-bottom:6px">Needs your attention</h3>`+
+  (dr.length?`<div class="att-i" tabindex="0" onclick="goto('log')"><span class="dot" style="background:var(--amber)"></span><div><b>${dr.length} draft observation${dr.length===1?"":"s"}</b>${dr.map(d=>`<div class="att-sub">${esc(sn(d.sid))} · ${d.when} — awaiting review</div>`).join("")}</div></div>`:`<div class="att-i"><span class="dot" style="background:var(--green)"></span><div><b>No drafts waiting</b><div class="att-sub">Nice work. Everything you started is saved.</div></div></div>`)+
+  rv.map(r=>`<div class="att-i" tabindex="0" onclick="openStu('${r.s.id}')"><span class="dot" style="background:var(--${r.p.type==="IEP"?"blue":"teal"})"></span><div><b>${r.p.type==="IEP"?"IEP review":"Plan check-in"} · ${sn(r.s.id)}</b><div class="att-sub">${fmtD(r.p.review)} · ${esc(r.p.title)}</div></div></div>`).join("");
+ $("week").innerHTML=`<div style="display:flex;justify-content:space-between"><h3>This week</h3><a class="src" onclick="goto('insights')">Details</a></div>
+  <div style="font-size:28px;font-weight:700;margin-top:6px">${4+savedCount} <span style="font-size:14px;font-weight:500" class="muted">observations</span></div>
+  <div class="muted small">${3+savedCount} positive supports · 1 incident</div>
+  <div class="snap"><i style="height:40%"></i><i style="height:70%"></i><i style="height:30%"></i><i class="hi" style="height:90%"></i><i style="height:20%"></i></div>
+  <div class="axis" style="margin-top:4px"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span></div>`;
+}
+function addPrep(k){prepAdded.has(k)?prepAdded.delete(k):prepAdded.add(k);renderToday()}
+function dismissRem(k){dismissed.add(k);renderToday()}
+function openStu(id){selStu=id;goto("students")}
+
+/* ---------- LOG ---------- */
 const OPT={
  A:["Activity interrupted","Activity denied","Activity transition","Divided attention","Given corrective feedback","Given demand / task","Long independent task","Unclear directions","Group work change","Left alone","Presence of a specific person","Redirection","Told to wait","Unexpected change"],
  Bc:["Left designated area","Property misuse","Property destruction","Verbal outburst","Work refusal","Disengaged / sleeping","Threat","Physical contact with others"],
@@ -470,46 +541,118 @@ const QUICK={challenge:[
  positive:[
  ["Break card → Returned to task",{A:["Long independent task"],B:["Used a break card","Returned to task"],C:["Offered a break"],P:["Proactive brief break"]}],
  ["Transition went smoothly",{A:["Activity transition"],B:["Transitioned smoothly"],C:["Positive interaction"],P:["Countdown before transitions"]}]]};
-const EMPTY=()=>({A:[],B:[],C:[],P:[]});
-let S=EMPTY(),type="challenge",cur=null,tmp=[],fT="all",fS="all";
-const $=id=>document.getElementById(id);
-const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-function stu(){return document.querySelector("#stuRow .pick.on").textContent}
-function render(){
+const seg=id=>{const b=document.querySelector("#"+id+" button.on");return b?b.textContent:""};
+function renderLog(){
+ const c=logClass();$("lgClass").textContent=c.id==="PL"?"Planning period":c.name+" · "+c.per;$("lgTime").textContent="Thu Nov 12 · "+fmt(clock);
+ let pool=active().filter(s=>s.classes.includes(c.id));if(!pool.length)pool=active();
+ if(!pool.some(s=>s.id===logStu))logStu=pool.length?pool[0].id:"";
+ $("stuRow").innerHTML=pool.map(s=>`<span class="pill pick ${s.id===logStu?"on":""}" tabindex="0" onclick="logStu='${s.id}';renderLog()">${s.first} ${s.li}.</span>`).join("")||'<span class="muted small">Add a student first.</span>';
  ["A","B","C","P"].forEach(k=>{$("v"+k).innerHTML=S[k].length?S[k].map(x=>`<span class="tag">${esc(x)}</span>`).join(""):'<span class="none">Not set</span>'});
- const note=$("noteTxt").value.trim(),ok=S.B.length>0||note.length>0;
- const sb=$("saveBtn");sb.disabled=!ok;sb.style.opacity=ok?1:.5;
- $("summary").textContent=ok?`${stu()} · Science · 9:15 AM — ${S.B.join(", ")||"behavior not documented"}`:"Choose a behavior or write a note to save.";
- const q=$("quick");q.querySelectorAll(".qchip").forEach(e=>e.remove());
- QUICK[type].forEach(([l,v])=>{const b=document.createElement("button");b.className="qchip";b.textContent=l;b.onclick=()=>{S=JSON.parse(JSON.stringify(v));render()};q.appendChild(b)});
- applyFilter();
+ const note=$("noteTxt").value.trim(),ok=(S.B.length>0||note.length>0)&&logStu;
+ [$("saveBtn"),$("draftBtn")].forEach(b=>{b.disabled=!ok;b.style.opacity=ok?1:.5});
+ $("summary").textContent=ok?`${sn(logStu)} · ${c.id==="PL"?"Planning":c.name} · ${fmt(clock)} — ${S.B.join(", ")||"behavior not documented"}`:"Choose a behavior or write a note to save.";
+ $("quick").querySelectorAll(".qchip").forEach(e=>e.remove());
+ QUICK[type].forEach(([l,v])=>{const b=document.createElement("button");b.className="qchip";b.textContent=l;b.onclick=()=>{S=JSON.parse(JSON.stringify(v));renderLog()};$("quick").appendChild(b)});
+ $("logFilters").innerHTML=[["all","All"],["incident","Incidents"],["positive","Positive"],["draft","Drafts"]].map(([k,l])=>`<span class="fchip ${fT===k?"on":""}" onclick="fT='${k}';renderLog()">${l}</span>`).join("")+`<span class="fsep"></span><span class="fchip ${fS==="all"?"on":""}" onclick="fS='all';renderLog()">Everyone</span>`+active().map(s=>`<span class="fchip ${fS===s.id?"on":""}" onclick="fS='${s.id}';renderLog()">${s.first}</span>`).join("");
+ const list=entries.filter(e=>e.kind==="obs"&&(fT==="all"||(fT==="draft"?e.draft:e.type===fT))&&(fS==="all"||e.sid===fS));
+ $("logCount").textContent=list.length+" entries";
+ const j=a=>a.length?a.map(esc).join(", "):"<i>Not documented</i>";
+ $("logList").innerHTML=list.map(e=>`<div class="le ${e.draft?"draftrow":""} ${e.fresh?"new":""}"><div class="ld ${e.draft?"dr":e.type==="positive"?"pos":""}"></div><div><div class="lh"><b>${esc(sn(e.sid))}</b> · ${esc(e.cls)}${e.draft?'<span class="draftpill">Draft</span>':""} <span class="muted small">${e.when}</span></div>
+  <div class="lc"><span>${j(e.A)}</span>›<span>${j(e.B)}</span>›<span>${j(e.C)}</span></div>${e.note?`<div class="ln">“${esc(e.note)}”</div>`:""}
+  ${e.draft?`<div class="acts"><button class="tbtn" onclick="resumeDraft('${e.id}')">Resume</button><button class="tbtn danger" onclick="discardDraft('${e.id}')">Discard</button></div>`:""}</div></div>`).join("")||'<div class="muted" style="padding:14px 0">Nothing here yet.</div>';
 }
-function applyFilter(){let n=0;document.querySelectorAll("#logList .le").forEach(e=>{const show=(fT==="all"||e.dataset.t===fT)&&(fS==="all"||e.dataset.s===fS);e.classList.toggle("hide",!show);if(show)n++});$("logCount").textContent=n+" entries"}
 function openP(k){cur=k;tmp=[...S[k]];$("pTitle").textContent=TITLE[k];$("pSearch").value="";$("pDesc").value="";drawList();$("overlay").classList.add("open");$("pSearch").focus()}
 function drawList(){const f=$("pSearch").value.toLowerCase();const src=cur==="B"?(type==="challenge"?OPT.Bc:OPT.Bp):OPT[cur];
  $("pList").innerHTML="";src.filter(o=>o.toLowerCase().includes(f)).forEach(o=>{const d=document.createElement("div");
   d.className="opt"+(tmp.includes(o)?" sel":"");d.innerHTML=`<span>${o}</span><span class="circ">${tmp.includes(o)?"✓":""}</span>`;
   d.onclick=()=>{tmp=tmp.includes(o)?tmp.filter(x=>x!==o):[...tmp,o];drawList()};$("pList").appendChild(d)})}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2800)}
+function setSeg(id,val){document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x.textContent===val))}
+function commit(draft){
+ const c=logClass(),note=$("noteTxt").value.trim();
+ if(editing)entries=entries.filter(e=>e.id!==editing);
+ const e={id:"e"+(nextE++),kind:"obs",type:type==="positive"?"positive":"incident",sid:logStu,cls:c.id==="PL"?"Planning":c.name,when:"Thu Nov 12 · "+fmt(clock),A:S.A,B:S.B,C:S.C,P:S.P,note,draft,fresh:true,int:seg("intSeg"),out:seg("outSeg")};
+ entries.unshift(e);setTimeout(()=>{e.fresh=false},4000);
+ if(!draft)savedCount++;
+ editing=null;S=EMPTY();$("noteTxt").value="";setSeg("intSeg","");setSeg("outSeg","");
+ toast(draft?"Draft saved — finish it later from this log or Today.":"Saved — added to the log and "+sn(e.sid)+"'s timeline (preview only).");renderAll()}
+function resumeDraft(id){const e=entries.find(x=>x.id===id);if(!e)return;editing=id;type=e.type==="positive"?"positive":"challenge";
+ document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x.dataset.t===type));
+ S={A:[...e.A],B:[...e.B],C:[...e.C],P:[...e.P]};logStu=e.sid;$("noteTxt").value=e.note||"";setSeg("intSeg",e.int||"");setSeg("outSeg",e.out||"");
+ goto("log");toast("Draft loaded — review and save when ready.")}
+function discardDraft(id){entries=entries.filter(e=>e.id!==id);if(editing===id)editing=null;renderAll()}
+
+/* ---------- STUDENTS ---------- */
+function renderStudents(){
+ const q=sQuery.toLowerCase(),list=active().filter(s=>(s.first+" "+s.li).toLowerCase().includes(q));
+ if(!students.find(s=>s.id===selStu&&!s.archived))selStu=active().length?active()[0].id:"";
+ const arch=students.filter(s=>s.archived);
+ $("roster").innerHTML=list.map(s=>`<button class="srow ${s.id===selStu?"on":""}" onclick="selStu='${s.id}';renderStudents()"><div class="avatar ${av(s.id)}">${ini(s.id)}</div><div><b>${s.first} ${s.li}.</b><div class="muted small">Grade ${s.grade} · ${s.classes.map(id=>CL.find(c=>c.id===id).short).join(" · ")||"No classes"}</div></div></button>`).join("")+(list.length?"":'<div class="muted" style="padding:12px">No matches.</div>')+
+  (arch.length?`<div class="small muted" style="margin:14px 10px 4px">Archived (${arch.length})</div>`+arch.map(s=>`<div class="row" style="padding:4px 10px;justify-content:space-between"><span class="small muted">${s.first} ${s.li}.</span><button class="tbtn" onclick="restoreStudent('${s.id}')">Restore</button></div>`).join(""):"");
+ const s=students.find(x=>x.id===selStu);
+ if(!s){$("sdetail").innerHTML='<div class="card muted">No students yet. Use “Add student” to start your caseload.</div>';return}
+ const ev=entries.filter(e=>e.sid===s.id);
+ const hb=s.hb||{helped:s.supports.join("; ")||"Not documented yet",prep:"Not enough observations yet to draft this.",improved:"Not enough observations yet to draft this."};
+ $("sdetail").innerHTML=`<div class="card">
+  <div class="row" style="gap:14px;margin-bottom:14px"><div class="avatar ${av(s.id)}" style="width:52px;height:52px;font-size:18px">${ini(s.id)}</div><div><h2>${s.first} ${s.li}.</h2><div class="muted small">Grade ${s.grade} · ${s.classes.map(id=>CL.find(c=>c.id===id).name).join(", ")||"No classes yet"}</div></div>
+   <div class="row" style="margin-left:auto"><button class="btn ghost" onclick="studentForm('${s.id}')">Edit</button><button class="btn ghost" onclick="confirmBox('Archive ${s.first} ${s.li}.?','They will be hidden from rosters and pickers. Their observations are kept and you can restore them anytime.','archiveStudent(\\'${s.id}\\')','Archive')">Archive</button></div></div>
+  <div class="grid g-2"><div class="evidence"><b>Strengths</b><br>${esc(s.strengths)||"<i>Not documented</i>"}</div>
+  <div class="evidence"><b>Approved supports</b><br>${s.supports.map(x=>`<span class="tagx">${esc(x)}</span>`).join("")||"<i>None added yet</i>"}</div></div></div>
+ <div class="card" style="margin-top:18px"><div style="display:flex;justify-content:space-between;align-items:center"><h3>IEP &amp; support plans</h3><button class="btn ghost" onclick="planForm('${s.id}')">＋ Add plan</button></div>
+  <div class="small muted" style="margin:4px 0 6px">A summary for classroom use. The official plan lives in your district system.</div>
+  ${s.plans.map(p=>`<div class="plan"><div><b>${esc(p.title)}</b><div class="small muted">${esc(p.type)} · Started ${fmtD(p.start)} · Review ${p.review?fmtD(p.review):"not set"}</div></div>
+   <div class="row" style="gap:2px"><span class="pill ${p.status==="Active"?"green":p.status==="Ended"?"blue":"amber"}">${p.status}</span><button class="tbtn" onclick="planForm('${s.id}','${p.id}')">Edit</button><button class="tbtn danger" onclick="confirmBox('Remove this plan?','“${esc(p.title).replace(/'/g,"")}” will be removed from ${s.first}\\'s profile. This only affects this tool, not the official record.','delPlan(\\'${s.id}\\',\\'${p.id}\\')','Remove')">Remove</button></div></div>`).join("")||'<div class="muted" style="padding:12px 0">No plans added yet.</div>'}</div>
+ <div class="card" style="margin-top:18px"><h3 style="margin-bottom:12px">Timeline</h3><div class="tl">
+  ${ev.map(e=>e.kind==="int"?`<div class="ev int"><div class="small muted">${e.when}</div><b>${esc(e.title)}</b></div>`:`<div class="ev ${e.type==="positive"?"pos":""}"><div class="small muted">${e.when} · ${esc(e.cls)}</div><b>${e.B.map(esc).join(", ")||"Behavior not documented"}</b>${e.draft?'<span class="draftpill">Draft</span>':""}<div class="small muted">${e.A.length?"Before: "+e.A.map(esc).join(", ")+". ":""}${e.C.length?"After: "+e.C.map(esc).join(", ")+".":""}${e.note?" “"+esc(e.note)+"”":""}</div></div>`).join("")||'<div class="muted">No observations yet.</div>'}</div></div>
+ <div class="card" style="margin-top:18px"><div style="display:flex;justify-content:space-between"><h3>Handoff briefing <span class="muted small" style="font-weight:400">— preview</span></h3><span class="pill amber">Draft — review required</span></div>
+  <div class="grid g-3" style="margin-top:12px"><div class="evidence"><b>What has helped</b><br>${esc(hb.helped)}</div><div class="evidence"><b>Settings that need preparation</b><br>${esc(hb.prep)}</div><div class="evidence"><b>What has improved</b><br>${esc(hb.improved)}</div></div>
+  <div class="small muted" style="margin-top:8px">Based on ${ev.filter(e=>e.kind==="obs"&&!e.draft).length} saved observations. Review before sharing.</div></div>`;
+}
+function openModal(h){$("mbody").innerHTML=h;$("modal").classList.add("open")}
+function closeModal(){$("modal").classList.remove("open")}
+function confirmBox(t,m,fn,label){openModal(`<h2>${t}</h2><p class="muted" style="margin:0 0 16px">${m}</p><div class="row" style="justify-content:flex-end"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="${fn};closeModal()">${label}</button></div>`)}
+function studentForm(id){const s=id?students.find(x=>x.id===id):{first:"",li:"",grade:9,classes:[],strengths:"",supports:[]};
+ openModal(`<h2>${id?"Edit student":"Add student"}</h2>
+ <div class="fgrid"><div class="fg"><label class="lbl">First name</label><input class="fi" id="fFirst" value="${esc(s.first)}" maxlength="24"></div><div class="fg"><label class="lbl">Last initial</label><input class="fi" id="fLi" value="${esc(s.li)}" maxlength="1"></div></div>
+ <div class="fg"><label class="lbl">Grade</label><select class="fi" id="fGrade">${[9,10,11,12].map(g=>`<option ${g==s.grade?"selected":""}>${g}</option>`).join("")}</select></div>
+ <div class="fg"><label class="lbl">Classes with you</label><div class="cbs">${TEACH.map(c=>`<label><input type="checkbox" value="${c.id}" ${s.classes.includes(c.id)?"checked":""}>${c.name}</label>`).join("")}</div></div>
+ <div class="fg"><label class="lbl">Strengths</label><textarea class="fi" id="fStr">${esc(s.strengths)}</textarea></div>
+ <div class="fg"><label class="lbl">Approved supports (comma-separated)</label><textarea class="fi" id="fSup">${esc(s.supports.join(", "))}</textarea></div>
+ <div class="small muted">Use a first name and last initial only. Don't enter diagnoses or full IEP documents in this prototype.</div><div class="err" id="fErr"></div>
+ <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveStudent('${id||""}')">${id?"Save changes":"Add student"}</button></div>`)}
+function saveStudent(id){const first=$("fFirst").value.trim(),li=$("fLi").value.trim().toUpperCase();
+ if(!first||!/^[A-Z]$/.test(li)){$("fErr").textContent="Please enter a first name and a single-letter last initial.";return}
+ const d={first,li,grade:+$("fGrade").value,classes:[...document.querySelectorAll(".cbs input:checked")].map(x=>x.value),strengths:$("fStr").value.trim(),supports:$("fSup").value.split(",").map(x=>x.trim()).filter(Boolean)};
+ if(id){Object.assign(students.find(x=>x.id===id),d)}else{const n={id:"s"+nextS++,plans:[],archived:false,...d};students.push(n);selStu=n.id}
+ closeModal();renderAll()}
+function archiveStudent(id){students.find(x=>x.id===id).archived=true;renderAll()}
+function restoreStudent(id){students.find(x=>x.id===id).archived=false;selStu=id;renderAll()}
+function planForm(sid,pid){const s=students.find(x=>x.id===sid),p=pid?s.plans.find(x=>x.id===pid):{type:"IEP",title:"",start:TODAY,review:"",status:"Active"};
+ openModal(`<h2>${pid?"Edit plan":"Add plan"} · ${s.first} ${s.li}.</h2>
+ <div class="fg"><label class="lbl">Type</label><select class="fi" id="pType">${["IEP","504 plan","Classroom support plan","Other"].map(t=>`<option ${t===p.type?"selected":""}>${t}</option>`).join("")}</select></div>
+ <div class="fg"><label class="lbl">Title</label><input class="fi" id="pTitleF" value="${esc(p.title)}" placeholder="e.g. Annual IEP"></div>
+ <div class="fgrid"><div class="fg"><label class="lbl">Start date</label><input type="date" class="fi" id="pStart" value="${p.start}"></div><div class="fg"><label class="lbl">Next review</label><input type="date" class="fi" id="pRev" value="${p.review}"></div></div>
+ <div class="fg"><label class="lbl">Status</label><select class="fi" id="pStat">${["Active","In review","Ended"].map(t=>`<option ${t===p.status?"selected":""}>${t}</option>`).join("")}</select></div>
+ <div class="err" id="pErr"></div><div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="savePlan('${sid}','${pid||""}')">${pid?"Save changes":"Add plan"}</button></div>`)}
+function savePlan(sid,pid){const title=$("pTitleF").value.trim();if(!title){$("pErr").textContent="Please add a title.";return}
+ const d={type:$("pType").value,title,start:$("pStart").value||TODAY,review:$("pRev").value,status:$("pStat").value},s=students.find(x=>x.id===sid);
+ if(pid)Object.assign(s.plans.find(x=>x.id===pid),d);else s.plans.push({id:"p"+nextP++,...d});closeModal();renderAll()}
+function delPlan(sid,pid){const s=students.find(x=>x.id===sid);s.plans=s.plans.filter(p=>p.id!==pid);renderAll()}
+
+function renderAll(){renderHeader();renderToday();renderLog();renderStudents()}
+document.querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>goto(b.dataset.p)));
 document.querySelectorAll(".choose").forEach(t=>t.onclick=()=>openP(t.dataset.k));
 $("pSearch").oninput=drawList;
-$("pDone").onclick=()=>{const d=$("pDesc").value.trim();S[cur]=d?[...tmp,"“"+d+"”"]:tmp;$("overlay").classList.remove("open");render()};
+$("pDone").onclick=()=>{const d=$("pDesc").value.trim();S[cur]=d?[...tmp,"“"+d+"”"]:tmp;$("overlay").classList.remove("open");renderLog()};
 $("pBack").onclick=()=>$("overlay").classList.remove("open");
-document.querySelectorAll("#typeSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x===b));type=b.dataset.t;S=EMPTY();render()});
+document.querySelectorAll("#typeSeg button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#typeSeg button").forEach(x=>x.classList.toggle("on",x===b));type=b.dataset.t;S=EMPTY();renderLog()});
 ["intSeg","outSeg"].forEach(id=>document.querySelectorAll("#"+id+" button").forEach(b=>b.onclick=()=>document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b&&!x.classList.contains("on")))));
-document.querySelectorAll("#stuRow .pick").forEach(p=>p.onclick=()=>{document.querySelectorAll("#stuRow .pick").forEach(x=>x.classList.toggle("on",x===p));render()});
-document.querySelectorAll("#logFilters .fchip").forEach(c=>c.onclick=()=>{
- const isT=c.dataset.f!==undefined;document.querySelectorAll("#logFilters .fchip").forEach(x=>{if((x.dataset.f!==undefined)===isT)x.classList.toggle("on",x===c)});
- if(isT)fT=c.dataset.f;else fS=c.dataset.s;applyFilter()});
-$("noteTxt").oninput=render;
-$("clearBtn").onclick=()=>{S=EMPTY();$("noteTxt").value="";render()};
-$("saveBtn").onclick=()=>{
- const note=$("noteTxt").value.trim(),nd='<i>Not documented</i>',j=a=>a.length?a.map(esc).join(", "):nd;
- const e=document.createElement("div");e.className="le new";e.dataset.t=type==="positive"?"positive":"incident";e.dataset.s=stu();
- e.innerHTML=`<div class="ld ${type==="positive"?"pos":""}"></div><div><div class="lh"><b>${stu()}</b> · Science <span class="muted small">Just now · Thu Nov 12 · 9:15 AM</span></div><div class="lc"><span>${j(S.A)}</span>›<span>${j(S.B)}</span>›<span>${j(S.C)}</span></div>${note?`<div class="ln">“${esc(note)}”</div>`:""}</div>`;
- $("logList").prepend(e);
- const t=$("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);
- S=EMPTY();$("noteTxt").value="";render()};
-render();
+$("noteTxt").oninput=renderLog;
+$("clearBtn").onclick=()=>{S=EMPTY();$("noteTxt").value="";editing=null;renderLog()};
+$("saveBtn").onclick=()=>commit(false);$("draftBtn").onclick=()=>commit(true);
+$("sSearch").oninput=e=>{sQuery=e.target.value;renderStudents()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();$("overlay").classList.remove("open")}if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".pick,.att-i")){e.preventDefault();e.target.click()}});
+renderAll();
 </script>
 </body>
 </html>
