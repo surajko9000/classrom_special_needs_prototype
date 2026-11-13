@@ -136,7 +136,7 @@ Form:
   - **IEP & support plans** card: list of plans (title, type, start date, next review, status pill Active / In review / Ended) with **＋ Add plan**, **Edit**, **Remove** (confirm). Helper text: *"A summary for classroom use. The official plan lives in your district system."*
   - **Timeline:** every saved observation for the student (and drafts, tagged), plus an **intervention/support-plan start marker** (amber) such as "Support plan started: Chunk reading instructions + planned break options — Mon Oct 5".
   - **Handoff briefing** (marked **Draft — review required**): *What has helped*, *Settings that need preparation*, *What has improved*, with "Based on N saved observations. Review before sharing." Students with no briefing data show "Not enough observations yet."
-- **Add/Edit student form:** first name, **last initial (single letter)**, grade (9–12), classes (checkboxes for the four teaching periods), strengths (text), approved supports (comma-separated). Validate first name + single-letter initial. Note in form: *use first name + last initial only; don't enter diagnoses or full IEP documents.*
+- **Add/Edit student form:** first name, **last initial (single letter)**, grade (9–12), classes (checkboxes for the four teaching periods), strengths (text), approved supports (comma-separated). Validate first name + single-letter initial. Note in form: *the app shows first name + last initial only.* (IEPs themselves may be uploaded; see §6.6.)
 - **Add/Edit plan form:** type (IEP, 504 plan, Classroom support plan, Other), title (required), start date, next review date, status.
 - Added students appear immediately in Log pickers, Today rosters/counts, and filters.
 - **Never** reduce a student to a "problem score," diagnosis, or incident count.
@@ -147,6 +147,60 @@ Form:
 - Filters by student and class (visual in prototype; wire them in the real build if time permits).
 - **Draft meeting summary** panel: *Draft — review required*, editable text, source links, **Edit** and **Print view** buttons, labeled simulated. Example: "Since the 'Chunk reading + break options' support began on Oct 5, recorded incidents during independent reading decreased from 9 to 3, and 6 notes describe re-engagement after a structured break."
 - Every AI-style conclusion must link to source records. Compute chart numbers from the seed observations (don't hard-code unrelated values).
+
+### 6.6 Adding a student: drag-and-drop IEP + behavior log (demo flow)
+
+**Goal:** adding a student should be mostly **drag and drop**, not typing. **Build this as the demo's "add a student" flow; one student at a time.**
+
+**Assumptions (agreed):** the IEP contains the student's name, and the behavior log contains the student's name. The app uses the name in each file to match the files to one student.
+
+**Entry points**
+- A **"▶ Demo: add a student"** button in the header, grouped with the Demo clock (and a "Reset demo" control). The app still opens on **Today**; the flow only starts when this button is pressed. Do **not** open the app on an add-student screen.
+- A **drop zone at the top of the Students tab** ("Drop an IEP and a behavior log to add a student"), plus the existing **＋ Add student** form for manual one-offs.
+
+**Three steps (dialog with a stepper): Add files → Review → Done**
+1. **Add files.** Large drop zone (also click or Enter to browse). Two **sample chips** (fictional) can be dragged into the zone **or clicked**, plus a **"Use sample files"** button as a reliable fallback on stage. Below, show **"What the app found"**: a card per detected student, e.g. *"Sam T. · New student · IEP ✓ · Behavior log ✓ (6 entries)"*. If the name matches someone already on the roster, show *"Already on your roster · will merge."* Files the demo can't use are listed with a plain reason (never silently ignored). If a file contains several students, show one card each and let the teacher pick one ("the demo adds one student at a time").
+2. **Review (the teacher approves everything).**
+   - *Student:* first name, last initial (prefilled from the file's full name, e.g. "Sam Taylor" → Sam T.), grade, and the classes they are in (checkboxes).
+   - *From the IEP* (labeled **"Simulated reading · check each item"**): plan start date and next review date, strengths, and the proposed **supports and accommodations as individual checkboxes**, each with a source reference (e.g. "IEP §4"). Only checked items are saved.
+   - *From the behavior log* (labeled **"Imported · needs your OK"**): each entry as a checkbox row (date, class, Before › Observed › After, Incident/Positive). Only checked entries are saved.
+3. **Done.** Confirmation checklist: on the roster and in the Log student picker; IEP saved as a plan with its review date; N supports approved; N log entries imported; reminders for their classes now include them. Buttons: **Open profile**, **See on Today** (moves the demo clock to their first class), **Done**.
+
+**What "adding" changes everywhere (must be derived from the same store)**
+- Roster, class student counts, Log student picker (by class), and Students filters include the new student.
+- The student gets a **plan** (type IEP, title "Annual IEP (uploaded)", start, next review, Active). The upload date appears on **Needs your attention** automatically via the plan review date.
+- The student's profile shows an **IEP document row**: filename, a **"Sensitive record"** label, "Added <date> · only you can see this," and an Open link for the sample file.
+- Imported behavior entries use the **existing observation model** (§8): `type` incident/positive, `studentId`, class, `occurredAt`, `antecedent[]`, `behavior[]`, `consequence[]`, `support[]`, `note`, `draft=false`, plus an `imported=true` flag shown as an **"Imported"** tag in the Recent log and the student timeline. Entries are kept in date order.
+- **Reminders for the new student** are generated only from **approved supports** and **saved observations** in that class (e.g., "6 saved observations in Math Support (Oct 8 – Nov 10); N describe a support working…" + "Documented supports: …"). If there are no observations in a class, say so ("New to this class. Supports were approved from the plan; no observations recorded here yet."). Never reminders from unapproved items.
+
+**Behavior log file format (CSV; parsed for real in the demo).** Header row with these columns (extra columns ignored):
+`student,date,time,class,type,antecedent,behavior,consequence,support,note`
+- `student`: full name (required; if the column is missing, show "Couldn't find a 'student' column").
+- `date` is `YYYY-MM-DD`; `time` is 24-hour `HH:MM`; `type` is `incident` or `positive`.
+- `antecedent`, `behavior`, `consequence`, `support` use the **same option vocabulary as the Log pickers** (§6.2); multiple values are separated by `|`.
+- `class` is a class name from the schedule (e.g., "Math Support", "Science").
+
+**IEP reading is simulated.** In the demo only the fictional sample IEP (**IEP_Sam_Taylor.pdf**) is recognized, matched by the name in the filename; any other IEP shows "This demo can only read the sample IEP. Try the sample files." Label the reading step **simulated** in the UI and in code (`aiService.extractIep`). A real build would parse the document and still require teacher approval of each item.
+
+**Sample data to create (all fictional).** Student **Sam Taylor → shown as "Sam T."**, grade 10, classes Science (P2) and Math Support (P3).
+- *Sample IEP (PDF):* a one-page banner "SAMPLE DOCUMENT, fictional"; sections: student info (name, grade, IEP start Feb 9, 2026, annual review Feb 9, 2027), strengths ("strong with numbers, enjoys music, persistent once there is a clear plan"), services, **accommodations and supports** (§4: extra time on written tasks; break pass for self-regulation; preferential seating near the teacher), **classroom routines** (§5: check-in at the start of class; advance notice of schedule changes), progress reporting. **No diagnoses** in the sample.
+- *Sample behavior log (CSV, 6 rows, about half positive):* e.g., Nov 10 Math Support positive (Given demand / task › Asked for help › Task shortened / chunked); Nov 5 Science incident (Unexpected change › Verbal outburst › Verbal redirection; "Lab groups were changed at the start of class."); Oct 29 Math Support positive (Long independent task › Returned to task › Offered a break); Oct 22 Science incident (Told to wait › Verbal outburst › Verbal redirection); Oct 15 Math Support positive (Group work change › Joined group calmly › Positive interaction); Oct 8 Science incident (Long independent task › Work refusal › Task shortened / chunked).
+- Provide both files as downloads in the app (`/samples/`) so presenters can also demo real dragging from the desktop.
+
+**Edge cases to handle**
+- Re-adding the same student merges (adds the plan, new supports without duplicates, and entries); it does not create a duplicate.
+- Last initial must be a single letter; first name required.
+- Unreadable files are listed with a reason; the flow can still continue with whatever files were usable.
+- Esc and a visible **Close** button exit the dialog; the drop zone and sample chips are keyboard-operable (Enter/Space).
+- **Technical note:** make the draggable sample chips `span`s (not `button`s) and set `-webkit-user-drag: element` on them; some browsers won't start a drag from a reset (`all: unset`) button.
+
+**Real-world context (why the flow looks like this).** In schools a student usually arrives like this: a concern is raised, the school evaluates with parental consent, the team decides eligibility, an **IEP meeting** writes the plan (goals, services, accommodations, placement, sometimes a behavior plan), the student is enrolled and a case manager is assigned, **teachers are told their responsibilities under the IEP**, and the team reviews annually and re-evaluates about every three years. Transfers arrive with records from the old school. So the **roster and the IEP usually arrive first**, and the teacher builds the day-to-day picture; our flow mirrors that: **Enrolled → IEP added → Supports approved → History imported and reviewed → Ready for class prep.**
+
+**Past behavior records: decision and guardrails.** **Yes, import past behavior logs** as a **baseline** (gives "before" data for charts, context for handoffs, and evidence for reminders). Guardrails: tag as **Imported** with source and date; the teacher approves entries before they count; show how old records are and weight recent records more in reminders; never show a total or risk label, only a timeline and summary. Import teacher-observation logs and behavior-plan data; **leave out district discipline referrals** (sensitive, different framing).
+
+**Open questions for Lovable/the team**
+- Should a larger **multi-student import** (several IEPs and one shared log at once) be added later? Not for the demo.
+- Should the review step show a per-student **setup checklist** (Enrolled → IEP → Supports approved → History reviewed → Ready) on the profile? Recommended if time permits.
 
 ## 7. Scope decisions made with the user
 
@@ -162,6 +216,9 @@ Form:
 | Class switching on Today | **Yes** — pill strip to browse classes + demo clock. |
 | Draft observations | **Yes** — "Save as draft" feeds Log and Today. |
 | Student management | **Yes** — add / edit / archive students; add / edit / remove multiple plans per student. |
+| Adding students | **Drag-and-drop IEP + behavior log**, started from a **"▶ Demo: add a student"** header button (and a Students-tab drop zone). **One student at a time**, adds a **4th student (Sam T.)**. See §6.6. |
+| IEP documents | **OK to upload full IEPs**; marked Sensitive record; diagnoses kept off everyday screens; teacher approves each extracted support. |
+| Past behavior logs | **Yes**, as an imported baseline in the **existing observation format**; teacher reviews before they feed reminders. |
 | Log style | Tap-first with quick fills **plus** own-words note and a recent log; **no big square tiles**. |
 
 ## 8. Seed data (ALL FICTIONAL)
@@ -228,7 +285,7 @@ Make sure Today reminders, Class Prep, student timelines, and Insights are all *
 - **No** speculative psychology stated as fact (never "John threw the book because he wanted to escape reading").
 - Teachers validate all extracted observations and all generated summaries. Every summary says **"Draft — review required."**
 - Highlight improvements, strengths, and effective supports alongside difficulties. Show evidence trails and uncertainty.
-- Student records store only what's useful in class: name + last initial, grade, classes, strengths, supports, plan **summaries**. Not diagnoses or uploaded IEP documents.
+- **Decision: teachers may upload the full IEP** (see §6.6). Mitigations: label the file a **"Sensitive record"**, visible only to the teacher; keep **diagnosis text out of everyday screens** (Today, Log, Class Prep show supports and strengths only); show only first name + last initial on screen; only teacher-approved items drive reminders. All demo IEPs are fictional. A real deployment still needs district and FERPA approval.
 - Students are archived, not deleted, to respect record retention.
 
 ## 10. AI behavior (mocked, behind `aiService`)
@@ -259,7 +316,7 @@ ABC Tracker, CentralReach LiftEd, AbleSpace, RethinkEd, Branching Minds. **Our d
 - Insights: ≥2 charts from seed data with intervention marker (descriptive wording) and an editable "Draft — review required" summary panel.
 - Consistent seed data; polished UI.
 
-**Stretch:** printable summary page, advanced student filters, interventions overlay, responsive mobile layout, CSV roster import mock (not built; real schools normally sync rosters from the student information system).
+**Stretch:** printable summary page, advanced student filters, interventions overlay, responsive mobile layout. (Roster import in bulk is out for now: the demo adds **one student at a time**; real schools normally sync rosters from the student information system.)
 
 **Out of scope:** production LLM inference, district/SIS integrations, real student data, multi-tenant permissions, automated placement recommendations, predictive scoring, real notifications, clinically validated recommendations, real voice input.
 
@@ -271,7 +328,8 @@ ABC Tracker, CentralReach LiftEd, AbleSpace, RethinkEd, Branching Minds. **Our d
 5. Open **John's profile** → new entry on the timeline; show his plans.
 6. Open **Insights** → patterns and the Oct 5 intervention marker → draft meeting summary with source links.
 7. Show **Handoff briefing** on a student profile.
-8. Switch demo clock to **10:00** (or tap **Next class** / **Play**) → Math Support with different reminders; also tap the class strip to look ahead; at **11:00** show Planning suggestions.
+8. Press **▶ Demo: add a student** in the header, drag in a sample IEP and behavior log, review, and add the 4th student (see §6.6); then see them in the roster and in Today's reminders.
+9. Switch demo clock to **10:00** (or tap **Next class** / **Play**) → Math Support with different reminders; also tap the class strip to look ahead; at **11:00** show Planning suggestions.
 
 ## 15. Known gaps in the reference prototype (`index.html`)
 - Class Prep and Insights are still static (Science/John only); they don't react to the clock, new students, or saved observations.
