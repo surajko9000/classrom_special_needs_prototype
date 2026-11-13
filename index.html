@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classroom Compass — Look & Feel Preview</title>
+<style>
+:root{
+  --bg:#f7f5f0; --card:#fffdf9; --line:#e7e2d8; --ink:#1f2a37; --muted:#6b7280;
+  --blue:#1e4a6e; --blue-soft:#e6eef5; --teal:#2a8a8a; --teal-soft:#e2f2f1;
+  --warm:#f3eee4; --amber:#b7791f; --amber-soft:#fbf1dc; --green:#3b7d5a; --green-soft:#e3f1e8;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+h1,h2,h3,h4{margin:0;font-weight:650;letter-spacing:-.01em}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+/* sidebar */
+aside{background:#fffdf9;border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px 18px;font-weight:700;font-size:17px;color:var(--blue)}
+.logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--teal));display:grid;place-items:center;color:#fff;font-size:16px}
+nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#40505f;width:calc(100% - 24px);font-weight:500}
+nav button:hover{background:var(--warm)}
+nav button.active{background:var(--blue-soft);color:var(--blue);font-weight:650}
+nav .ic{width:20px;text-align:center}
+.logbtn{margin-top:14px;background:var(--blue);color:#fff;border:0;border-radius:12px;padding:12px;font-weight:600;font-size:15px;cursor:pointer;display:flex;gap:8px;justify-content:center}
+.side-foot{margin-top:auto;font-size:12px;color:var(--muted);padding:10px 8px;border-top:1px solid var(--line)}
+.badge-demo{display:inline-block;background:var(--amber-soft);color:var(--amber);padding:3px 8px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:6px}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--line);background:rgba(247,245,240,.9);position:sticky;top:0;backdrop-filter:blur(6px);z-index:5}
+.clock{display:flex;align-items:center;gap:8px;background:#fff;border:1px dashed var(--teal);border-radius:12px;padding:6px 10px;font-size:13px}
+.clock b{color:var(--teal)}
+.clock .chip{background:var(--teal-soft);color:var(--teal);padding:3px 9px;border-radius:8px;font-weight:600;font-size:12px}
+.clock .chip.on{background:var(--teal);color:#fff}
+main{padding:28px 32px 60px;max-width:1180px}
+.page{display:none}.page.show{display:block}
+.title{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.title h1{font-size:26px}
+.title p{margin:4px 0 0;color:var(--muted)}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.grid{display:grid;gap:18px}
+.g-main{grid-template-columns:1.7fr 1fr}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.g-2{grid-template-columns:1fr 1fr}
+.hero{background:linear-gradient(135deg,#1e4a6e,#2a7a86);color:#fff;border:0;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.hero .sub{opacity:.85;font-size:14px}
+.hero h2{font-size:28px;margin:4px 0 6px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.now{background:rgba(255,255,255,.2);color:#fff}
+.pill.teal{background:var(--teal-soft);color:var(--teal)}
+.pill.blue{background:var(--blue-soft);color:var(--blue)}
+.pill.amber{background:var(--amber-soft);color:var(--amber)}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.count{text-align:right}.count .big{font-size:38px;font-weight:700;line-height:1}
+.btn{display:inline-block;border:0;border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--line)}
+.btn.light{background:#fff;color:var(--blue)}
+.sec{margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.sec h3{font-size:17px}.sec span{color:var(--muted);font-size:13px}
+.reminder{display:flex;flex-direction:column;gap:10px;border-left:4px solid var(--teal)}
+.reminder .who{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;font-size:14px}
+.a1{background:#4b7fa8}.a2{background:#c08a3e}.a3{background:#5a9a7b}
+.evidence{background:var(--warm);border-radius:10px;padding:10px 12px;font-size:13.5px;color:#41505e}
+.evidence a,.src{color:var(--blue);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-size:13px}
+.strategy{display:flex;gap:8px;align-items:flex-start}
+.strategy::before{content:"✦";color:var(--teal)}
+.muted{color:var(--muted)}.small{font-size:13px}
+.list-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.list-item:last-child{border:0}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.snap{display:flex;gap:6px;align-items:flex-end;height:60px;margin-top:10px}
+.snap i{flex:1;background:var(--blue-soft);border-radius:4px 4px 0 0}
+.snap i.hi{background:var(--teal)}
+.disclaimer{font-size:12.5px;color:var(--muted);background:var(--amber-soft);border-radius:10px;padding:10px 12px;margin-top:14px}
+/* log */
+textarea{width:100%;min-height:130px;border:1px solid var(--line);border-radius:12px;padding:14px;font:inherit;background:#fff;resize:vertical}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:650;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.input{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:40px}
+.input.flag{border-color:#e4c68a;background:#fffaf0}
+.abc{display:flex;gap:12px}
+.abc .letter{width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;background:#fff;opacity:.6}
+/* prep */
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border:0}
+.box{width:22px;height:22px;border-radius:7px;border:2px solid #b8c2cc;flex:none;display:grid;place-items:center;font-size:14px;color:#fff}
+.box.done{background:var(--teal);border-color:var(--teal)}
+.done-t{text-decoration:line-through;color:var(--muted)}
+/* students */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:12px 10px;border-bottom:1px solid var(--line)}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;padding:0 0 18px}
+.tl .ev::before{content:"";position:absolute;left:-22px;top:5px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
+.tl .ev.pos::before{border-color:var(--green)}
+.tl .ev.int::before{border-color:var(--amber);background:var(--amber)}
+.tabs{display:flex;gap:6px;margin-bottom:16px}
+.tabs span{padding:6px 12px;border-radius:8px;background:#fff;border:1px solid var(--line);font-size:13px}
+.tabs span.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* charts */
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:14px;border-bottom:1px solid var(--line);padding-bottom:2px;position:relative}
+.bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;height:100%}
+.bars .b div{width:100%;border-radius:5px 5px 0 0}
+.bars .inc{background:var(--blue)}.bars .pos{background:#9ed3cf}
+.axis{display:flex;gap:10px;font-size:12px;color:var(--muted);margin-top:6px}.axis span{flex:1;text-align:center}
+.marker{position:absolute;top:0;bottom:0;border-left:2px dashed var(--amber)}
+.marker em{position:absolute;top:-4px;left:6px;font-size:11px;color:var(--amber);font-style:normal;white-space:nowrap;background:var(--card);padding:0 4px}
+.hbar{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:14px}
+.hbar .lab{width:150px}.hbar .tr{flex:1;background:var(--warm);height:16px;border-radius:8px;overflow:hidden}
+.hbar .tr i{display:block;height:100%;background:var(--teal);border-radius:8px}
+.draft{border:2px dashed var(--amber);background:#fffdf5}
+.legend{display:flex;gap:16px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.g-main,.g-3,.g-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="logo">🧭</div>Classroom Compass</div>
+  <nav>
+    <button class="active" data-p="today"><span class="ic">◉</span>Today</button>
+    <button data-p="log"><span class="ic">✎</span>Log</button>
+    <button data-p="prep"><span class="ic">☑</span>Class Prep</button>
+    <button data-p="students"><span class="ic">☺</span>Students</button>
+    <button data-p="insights"><span class="ic">◔</span>Insights</button>
+  </nav>
+  <button class="logbtn" data-p="log">＋ Log observation</button>
+  <div class="side-foot"><span class="badge-demo">Demo uses fictional data</span><br>Morgan Lee · Special Education</div>
+</aside>
+
+<div>
+<header>
+  <div class="muted small">Thursday, November 12 · <b style="color:var(--ink)">9:00 AM</b></div>
+  <div class="clock">
+    <span>⏱ <b>Demo clock</b></span>
+    <span class="chip">Thu</span>
+    <span class="chip on">9:00</span>
+    <span class="chip">10:00</span>
+    <span class="chip">13:00</span>
+    <span class="chip">Next class ▸</span>
+    <span class="chip">▶ Play</span>
+  </div>
+</header>
+
+<main>
+<!-- ================= TODAY ================= -->
+<section class="page show" id="today">
+  <div class="title"><div><h1>Good morning, Morgan</h1><p>Here's what to prepare for your day.</p></div></div>
+
+  <div class="card hero">
+    <div>
+      <span class="pill now">● In session now</span>
+      <h2>Science · Period 2</h2>
+      <div class="sub">9:00 – 9:50 AM · Room 214 · 3 students · Planned: Independent reading, then group lab</div>
+      <div style="margin-top:14px;display:flex;gap:10px"><button class="btn light">Open class prep</button><button class="btn" style="background:rgba(255,255,255,.18);color:#fff">View roster</button></div>
+    </div>
+    <div class="count"><div class="sub">ends in</div><div class="big">50 min</div><div class="sub">Next: Math Support · 10:00</div></div>
+  </div>
+
+  <div class="grid g-main" style="margin-top:20px">
+    <div>
+      <div class="sec" style="margin-top:0"><h3>Preparation reminders for this class</h3><span>2 to review</span></div>
+      <div class="grid">
+        <div class="card reminder">
+          <div class="who"><div class="avatar a1">JD</div><div><b>John D.</b><div class="muted small">Independent reading segment</div></div><span class="pill teal" style="margin-left:auto">Preparation reminder</span></div>
+          <div class="evidence">Three prior observations during independent science reading mention task difficulty (Oct 8, Oct 22, Nov 3). Two more recent notes describe him re-engaging after a structured break. <a>View 5 source observations</a></div>
+          <div class="strategy"><div><b>Documented support:</b> Chunk the reading into shorter segments with clear written directions; have break options ready.</div></div>
+          <div class="row"><button class="btn primary">Add to prep</button><button class="btn ghost">Dismiss for today</button></div>
+        </div>
+        <div class="card reminder">
+          <div class="who"><div class="avatar a2">AM</div><div><b>Alex M.</b><div class="muted small">Transition to group lab</div></div><span class="pill teal" style="margin-left:auto">Preparation reminder</span></div>
+          <div class="evidence">Transitions went smoothly in 4 of 6 notes when a visual cue was shown ahead of time (Oct 15 – Nov 10). <a>View 6 source observations</a></div>
+          <div class="strategy"><div><b>Documented support:</b> Show the visual schedule and give a 5-minute transition warning.</div></div>
+          <div class="row"><button class="btn primary">Add to prep</button><button class="btn ghost">Dismiss for today</button></div>
+        </div>
+      </div>
+      <div class="disclaimer">Reminders are drawn from teacher-recorded observations and approved supports. They show associations, not causes, and are not predictions about any student.</div>
+    </div>
+
+    <div class="grid" style="align-content:start">
+      <div class="card">
+        <h3 style="margin-bottom:6px">Needs your attention</h3>
+        <div class="list-item"><span class="dot" style="background:var(--amber)"></span><div><b>1 draft observation</b><div class="muted small">Maya R. · Yesterday 1:20 PM — awaiting review</div></div></div>
+        <div class="list-item"><span class="dot" style="background:var(--blue)"></span><div><b>IEP review · Alex M.</b><div class="muted small">Tuesday, Nov 17 · Summary can be drafted</div></div></div>
+        <div class="list-item"><span class="dot" style="background:var(--teal)"></span><div><b>Intervention check-in</b><div class="muted small">“Chunk reading + break options” · week 6</div></div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between"><h3>This week</h3><a class="src">Details</a></div>
+        <div style="font-size:28px;font-weight:700;margin-top:6px">4 <span style="font-size:14px;font-weight:500" class="muted">observations</span></div>
+        <div class="muted small">3 positive supports · 1 incident</div>
+        <div class="snap"><i style="height:40%"></i><i style="height:70%"></i><i style="height:30%"></i><i class="hi" style="height:90%"></i><i style="height:20%"></i></div>
+        <div class="axis" style="margin-top:4px"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOG ================= -->
+<section class="page" id="log">
+  <div class="title"><div><h1>Log an observation</h1><p>Write it the way you'd say it. Review the structure before saving.</p></div></div>
+  <div class="grid g-2" style="grid-template-columns:1fr 1.1fr">
+    <div class="card">
+      <div class="row field">
+        <div style="flex:1"><label>Class (auto)</label><div class="input">Science · Period 2</div></div>
+        <div style="flex:1"><label>Time</label><div class="input">Thu Nov 12 · 9:15 AM</div></div>
+      </div>
+      <div class="field"><label>Student</label>
+        <div class="row"><span class="pill blue" style="padding:8px 14px">John D.</span><span class="pill" style="background:var(--warm);padding:8px 14px">Alex M.</span><span class="pill" style="background:var(--warm);padding:8px 14px">Maya R.</span></div></div>
+      <div class="field"><label>What happened?</label>
+        <textarea>During independent science reading around 9:15, John tossed his workbook after the instructions seemed confusing. I offered a break and then split the reading into smaller chunks. He returned to the activity.</textarea></div>
+      <div class="row"><button class="btn primary">✦ Structure note</button><div class="mic" title="Visual only">🎙</div><span class="muted small">Voice input is a placeholder in this demo.</span></div>
+      <div class="disclaimer">Structuring is simulated for this prototype. You review and correct everything before it is saved.</div>
+    </div>
+
+    <div class="card draft">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h3>Draft — review required</h3><span class="pill amber">Not saved yet</span></div>
+      <div class="abc field"><div class="letter">A</div><div style="flex:1"><label>Antecedent — what happened before</label><div class="input">Independent science reading; student indicated the instructions seemed confusing.</div></div></div>
+      <div class="abc field"><div class="letter">B</div><div style="flex:1"><label>Behavior — what was observed</label><div class="input">Tossed workbook.</div></div></div>
+      <div class="abc field"><div class="letter">C</div><div style="flex:1"><label>Response — what happened after</label><div class="input">Teacher offered a break, then divided the reading into smaller chunks. Student returned to the activity.</div></div></div>
+      <div class="row field">
+        <div style="flex:1"><label>Support used</label><div class="input">Break offered · chunked reading</div></div>
+        <div style="flex:1"><label>Outcome</label><div class="input">Re-engaged with task</div></div>
+      </div>
+      <div class="row field">
+        <div style="flex:1"><label>Duration</label><div class="input flag">Not documented — add if known</div></div>
+        <div style="flex:1"><label>Location</label><div class="input flag">Not documented — add if known</div></div>
+      </div>
+      <div class="row"><button class="btn primary">Save observation</button><button class="btn ghost">Discard</button><span class="muted small">Type: Incident + support used</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PREP ================= -->
+<section class="page" id="prep">
+  <div class="title"><div><h1>Class prep</h1><p>Science · Period 2 · Thu 9:00 – 9:50</p></div><div class="row"><span class="pill blue">Class: Science ▾</span><span class="pill blue">Activity: Independent reading → group lab ▾</span></div></div>
+  <div class="grid g-main">
+    <div class="grid" style="align-content:start">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between"><h3>Prep checklist</h3><span class="pill green">1 of 4 done</span></div>
+        <div class="check"><div class="box done">✓</div><div><span class="done-t">Display the visual agenda</span><div class="muted small">For Alex M. · documented support</div></div></div>
+        <div class="check"><div class="box"></div><div><b>Prepare a shorter, chunked reading option</b><div class="muted small">For John D. · see 5 observations</div></div></div>
+        <div class="check"><div class="box"></div><div><b>Set out break-option cards</b><div class="muted small">For John D. · intervention started Oct 5</div></div></div>
+        <div class="check"><div class="box"></div><div><b>Review transition routine into group lab</b><div class="muted small">For Alex M. and Maya R.</div></div></div>
+        <div class="row" style="margin-top:12px"><div class="input" style="flex:1;color:var(--muted)">＋ Add your own prep note…</div><button class="btn ghost">Add</button></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px">What to watch for in this activity</h3>
+        <p class="muted" style="margin:0 0 8px">Notes from past sessions of independent reading:</p>
+        <ul style="margin:0;padding-left:18px"><li>Lengthy, unbroken reading blocks appear in most past notes about task difficulty.</li><li>Written directions with numbered steps appear alongside smoother starts.</li><li>Group lab transitions go better with advance notice.</li></ul>
+        <div class="disclaimer">These are observational associations, not proof of cause.</div>
+      </div>
+    </div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h3 style="margin-bottom:10px">What worked before</h3>
+        <div class="list-item"><span class="dot" style="background:var(--green)"></span><div><b>Structured break, then chunk</b><div class="muted small">John D. · Nov 3 · re-engaged within 5 min <a class="src">source</a></div></div></div>
+        <div class="list-item"><span class="dot" style="background:var(--green)"></span><div><b>Quiet workspace + advance notice</b><div class="muted small">Maya R. · Nov 10 · joined group calmly <a class="src">source</a></div></div></div>
+        <div class="list-item"><span class="dot" style="background:var(--green)"></span><div><b>5-minute transition warning</b><div class="muted small">Alex M. · Nov 6 · smooth transition <a class="src">source</a></div></div></div>
+      </div>
+      <div class="card"><h3 style="margin-bottom:8px">Student supports in this class</h3>
+        <div class="row" style="gap:12px;margin:8px 0"><div class="avatar a1">JD</div><div><b>John D.</b><div class="muted small">Chunked reading · written directions · break options</div></div></div>
+        <div class="row" style="gap:12px;margin:8px 0"><div class="avatar a2">AM</div><div><b>Alex M.</b><div class="muted small">Visual schedule · transition warnings</div></div></div>
+        <div class="row" style="gap:12px;margin:8px 0"><div class="avatar a3">MR</div><div><b>Maya R.</b><div class="muted small">Quiet workspace · notice of group changes</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STUDENTS ================= -->
+<section class="page" id="students">
+  <div class="title"><div><h1>Students</h1><p>Your caseload for Period 2 – 5</p></div><div class="input" style="width:260px;color:var(--muted)">🔍 Search students…</div></div>
+  <div class="grid g-main" style="grid-template-columns:1fr 1.6fr">
+    <div class="card" style="padding:8px 12px">
+      <table>
+        <tr><th>Student</th><th>Grade</th><th>Classes</th></tr>
+        <tr style="background:var(--blue-soft)"><td><b>John D.</b></td><td>10</td><td class="small">Sci · Math · Life</td></tr>
+        <tr><td><b>Alex M.</b></td><td>11</td><td class="small">Eng · Sci · Life</td></tr>
+        <tr><td><b>Maya R.</b></td><td>9</td><td class="small">Sci · Math</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="row" style="gap:14px;margin-bottom:14px"><div class="avatar a1" style="width:52px;height:52px;font-size:18px">JD</div><div><h2>John D.</h2><div class="muted small">Grade 10 · Science, Math Support, Life Skills</div></div><button class="btn primary" style="margin-left:auto">Handoff briefing</button></div>
+      <div class="grid g-2" style="margin-bottom:16px">
+        <div class="evidence"><b>Strengths</b><br>Hands-on labs, helps peers with tools, strong verbal reasoning.</div>
+        <div class="evidence"><b>Approved supports</b><br>Chunked reading · clear written directions · planned break options.</div>
+      </div>
+      <div class="tabs"><span class="on">Timeline</span><span>Interventions</span><span>Progress</span><span style="margin-left:auto">Filter: All classes ▾</span></div>
+      <div class="tl">
+        <div class="ev"><div class="small muted">Today · 9:15 AM · Science · Independent reading</div><b>Workbook tossed after confusing instructions</b><div class="small muted">Break offered, reading chunked; returned to task <span class="pill amber">draft</span></div></div>
+        <div class="ev pos"><div class="small muted">Nov 3 · Science</div><b>Used break card and returned to reading</b><div class="small muted">Re-engaged within 5 minutes · positive</div></div>
+        <div class="ev pos"><div class="small muted">Oct 27 · Math Support</div><b>Asked for a shorter segment before getting frustrated</b><div class="small muted">Self-advocacy · positive</div></div>
+        <div class="ev int"><div class="small muted">Oct 5 · Intervention started</div><b>Chunk reading instructions + planned break options</b></div>
+        <div class="ev"><div class="small muted">Sep 29 · Science · Independent reading</div><b>Pushed workbook away during a long reading task</b><div class="small muted">Teacher check-in; task not finished</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div style="display:flex;justify-content:space-between"><h3>Handoff briefing <span class="muted small" style="font-weight:400">— preview</span></h3><span class="pill amber">Draft — review required</span></div>
+    <div class="grid g-3" style="margin-top:12px">
+      <div class="evidence"><b>What has helped</b><br>Chunked reading with written directions; break cards. <a class="src">sources (7)</a></div>
+      <div class="evidence"><b>Settings that need preparation</b><br>Long independent reading blocks in Science. <a class="src">sources (5)</a></div>
+      <div class="evidence"><b>What has improved</b><br>More frequent re-engagement after breaks in recent weeks. <a class="src">sources (4)</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSIGHTS ================= -->
+<section class="page" id="insights">
+  <div class="title"><div><h1>Insights</h1><p>A simple, descriptive look at the last 8 weeks.</p></div><div class="row"><span class="pill blue">All students ▾</span><span class="pill blue">All classes ▾</span><button class="btn primary">Draft meeting summary</button></div></div>
+  <div class="grid g-2">
+    <div class="card">
+      <h3>Observations per week</h3>
+      <div class="muted small">Incidents and positive supports. Descriptive only.</div>
+      <div class="bars">
+        <div class="marker" style="left:37.5%"><em>Oct 5 · intervention starts</em></div>
+        <div class="b"><div class="pos" style="height:10%"></div><div class="inc" style="height:60%"></div></div>
+        <div class="b"><div class="pos" style="height:12%"></div><div class="inc" style="height:70%"></div></div>
+        <div class="b"><div class="pos" style="height:15%"></div><div class="inc" style="height:55%"></div></div>
+        <div class="b"><div class="pos" style="height:25%"></div><div class="inc" style="height:40%"></div></div>
+        <div class="b"><div class="pos" style="height:32%"></div><div class="inc" style="height:30%"></div></div>
+        <div class="b"><div class="pos" style="height:38%"></div><div class="inc" style="height:22%"></div></div>
+        <div class="b"><div class="pos" style="height:40%"></div><div class="inc" style="height:20%"></div></div>
+        <div class="b"><div class="pos" style="height:45%"></div><div class="inc" style="height:15%"></div></div>
+      </div>
+      <div class="axis"><span>Sep 21</span><span>Sep 28</span><span>Oct 5</span><span>Oct 12</span><span>Oct 19</span><span>Oct 26</span><span>Nov 2</span><span>Nov 9</span></div>
+      <div class="legend"><span><i style="background:var(--blue)"></i>Incidents</span><span><i style="background:#9ed3cf"></i>Positive / support worked</span></div>
+      <div class="disclaimer" style="background:var(--warm)">Recorded incidents were lower after Oct 5. This does not show that the intervention caused the change.</div>
+    </div>
+    <div class="card">
+      <h3>By classroom activity</h3>
+      <div class="muted small">Where observations were recorded</div>
+      <div style="margin-top:12px">
+        <div class="hbar"><span class="lab">Independent reading</span><div class="tr"><i style="width:80%"></i></div><b>12</b></div>
+        <div class="hbar"><span class="lab">Transitions</span><div class="tr"><i style="width:55%"></i></div><b>8</b></div>
+        <div class="hbar"><span class="lab">Group work</span><div class="tr"><i style="width:35%"></i></div><b>5</b></div>
+        <div class="hbar"><span class="lab">Hands-on lab</span><div class="tr"><i style="width:15%"></i></div><b>2</b></div>
+      </div>
+      <a class="src">View source observations</a>
+    </div>
+  </div>
+
+  <div class="card draft" style="margin-top:18px">
+    <div style="display:flex;justify-content:space-between"><h3>Meeting summary — John D.</h3><span class="pill amber">Draft — review required</span></div>
+    <p style="margin:10px 0">Since the “Chunk reading + break options” support began on Oct 5, recorded incidents during independent reading decreased from 9 to 3, and 6 notes describe re-engagement after a structured break. <a class="src">sources</a></p>
+    <div class="row"><button class="btn ghost">Edit</button><button class="btn ghost">Print view</button><span class="muted small">Generated from approved records. Simulated for demo.</span></div>
+  </div>
+</section>
+</main>
+</div>
+</div>
+
+<script>
+const btns=document.querySelectorAll('[data-p]');
+btns.forEach(b=>b.addEventListener('click',()=>{
+  const id=b.dataset.p;
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('show',p.id===id));
+  document.querySelectorAll('nav button').forEach(n=>n.classList.toggle('active',n.dataset.p===id));
+  window.scrollTo(0,0);
+}));
+</script>
+</body>
+</html>
